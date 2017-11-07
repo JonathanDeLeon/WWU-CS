@@ -67,6 +67,10 @@ public class Lexer {
                         continue;
                     }else{
                         // Handles all cases where there is whitespace after the symbol, expression, etc
+                        if(str.equals("INCLUDE")){
+                            str = "";
+                            continue;
+                        }
                         return readToken(str);
                     }
                 }

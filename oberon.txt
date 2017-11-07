@@ -1,6 +1,7 @@
 (* Buffer.oberon
 
 *)
+INCLUDE "test";
 MODULE Buffer;
 
   CONST N = 00100;
