@@ -22,7 +22,7 @@ public class Lexer {
                     "VAR|WHILE|WITH|BOOLEAN|CHAR|FALSE|INTEGER|NEW|REAL|TRUE)$");
 
     private Pattern symbolReg =
-            Pattern.compile("^.*?(&|\\^|:=|:|,|\\.\\.|\\.|\\||=|>|>=|\\{|\\[|\\(|<|<=|-|#|\\+|}|]|\\)|;|~|/|\\*).*");
+            Pattern.compile("^(&|\\^|:=|:|,|\\.\\.|\\.|\\||=|>|>=|\\{|\\[|\\(|<|<=|-|#|\\+|}|]|\\)|;|~|/|\\*)");
 
     private Pattern commentReg =
             Pattern.compile("^.*?(\\(\\*|\\*\\)|\\(\\*.*\\*\\)).*");
@@ -56,6 +56,25 @@ public class Lexer {
             while((r = reader.read()) != -1){
                 char c = (char)r;
                 if(Character.isWhitespace(c)) {
+                    // If character is whitespace
+                    if(str.matches("^(\"[a-zA-Z0-9\\s\']*(?!\")|\'[a-zA-Z0-9\\s\"]*(?!\'))")){
+                        //TODO: Symbols in string literal
+                        if (c == ' '){
+                            str += c;
+                        }
+                        int next = peek();
+                        if (next == -1){
+                            outputErrorMessage("unterminated string literal");
+                            outputErrorMessage("EOF in string literal");
+                            str = "";
+                        }else if(c =='\r' || c =='\n'){
+                            outputErrorMessage("unterminated string literal");
+                            outputErrorMessage("newline in string literal");
+                            lineNumber++;
+                            str = "";
+                        }
+                        continue;
+                    }
                     if(c == '\r' || c == '\n'){
                         this.isLineBreak = true;
                     }
@@ -77,7 +96,7 @@ public class Lexer {
                 if(!inComment){
                     str += c;
                     if (c == '*' && commentReg.matcher(str).matches()){
-//                        System.out.println("ITS A COMMENT");
+                        // Handle comments
                         str = str.substring(0, str.indexOf("(*"));
                         inComment = true;
                         comment = "(*";
@@ -86,13 +105,19 @@ public class Lexer {
                     Matcher m = symbolReg.matcher(Character.toString(c));
                     Matcher m2 = keywordReg.matcher(str);
                     if (m.matches()){
-//                        System.out.println("ITS A SYMBOL");
+                        // Handle Punctuations
                         if(!peekForSymbol(c)){
                             return readToken(str);
                         }
                     }
                     if(str.matches("^[a-zA-Z0-9]+$")){
-//                        System.out.println("ITS an indentifier");
+                        // Handle any alpha-numeric name
+                        if(peekForSymbol()){
+                            return readToken(str);
+                        }
+                    }
+                    if(str.matches("^(\"[a-zA-Z0-9\\s\']*\"|\'[a-zA-Z0-9\\s\"]*\')")){
+                        // Handle string literals
                         if(peekForSymbol()){
                             return readToken(str);
                         }
@@ -117,6 +142,7 @@ public class Lexer {
         token = null;
         Matcher m = keywordReg.matcher(str);
         Matcher m2 = symbolReg.matcher(str);
+//        System.out.println("String: "+str);
         if (m.find() || m2.find()) {
             if (symbolMap.containsKey(str) && symbolMap.get(str) >= 0) {
                 token = new Token(symbolMap.get(str), str);
@@ -161,19 +187,28 @@ public class Lexer {
                 }
             }
             token = new Token(Sym.T_CHAR_LITERAL, str);
-        }else if (str.matches("^[a-zA-Z][a-zA-Z0-9]*$")){
+        }else if (str.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             //IDENTIFIER CASE
             // sequence of up to 40 characters
-            if (str.equals("EOF")){
+            if (str.equals("EOF")) {
                 // Process EOF from System.in
                 System.out.println("Program terminated");
                 return (new Token(Sym.EOF, "EOF"));
             }
-            if (str.length() > 40){
+            if (str.length() > 40) {
                 outputErrorMessage("identifier too long");
-                str += str.substring(0,40);
+                str += str.substring(0, 40);
             }
             token = new Token(Sym.T_ID, str);
+        }else if(str.matches("^(\"[a-zA-Z0-9\\s\']*\"|\'[a-zA-Z0-9\\s\"]*\')")){
+            //STR_LITERAL CASE
+            // sequence of up to 80 characters not including surrounding quotes
+            if (str.length() > 82){
+                outputErrorMessage("string literal too long");
+                str = str.substring(0,81)+ str.charAt(str.length()-1);
+            }
+            String temp = str.substring(1, str.length()-1);
+            token = new Token(Sym.T_STR_LITERAL, temp);
         }else{
             // Instructions ambiguous how to handle error messages
             // i.e. program termination or continuation with a message?
@@ -191,19 +226,24 @@ public class Lexer {
         return peekForSymbol(Character.MIN_VALUE);
     }
     private boolean peekForSymbol(char currentSymbol){
-        try {
-            reader.mark(1);
-            char t = (char)reader.read();
-            reader.reset();
-            String str = Character.toString(currentSymbol)+Character.toString(t);
-            Matcher symbol = symbolReg.matcher(Character.toString(t));
-            if (symbol.find() && (symbolMap.containsKey(str.trim()) || str.equals("(*"))){
-                return true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        char t = (char)peek();
+        String str = Character.toString(currentSymbol)+Character.toString(t);
+        Matcher symbol = symbolReg.matcher(Character.toString(t));
+        if (symbol.find() && (symbolMap.containsKey(str.trim()) || str.equals("(*"))){
+            return true;
         }
         return false;
+    }
+    private int peek(){
+        int p = -1;
+        try {
+            reader.mark(1);
+            p = reader.read();
+            reader.reset();
+        } catch (IOException e) {
+            outputErrorMessage(e.getMessage());
+        }
+        return p;
     }
 
     private void createSymbolMap() {
