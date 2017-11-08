@@ -13,6 +13,8 @@ public class Lexer {
 
     private int lineNumber = 1;
     private boolean isLineBreak = false;
+    private boolean inInclude = false;
+    private boolean inComment = false;
     private String errorMessage = "";
 
     private Pattern keywordReg =
@@ -31,7 +33,7 @@ public class Lexer {
     private Pattern endCommentReg =
             Pattern.compile("^.*?(\\*\\)).*");
 
-    public HashMap<String, Integer> symbolMap = new HashMap<>();
+    private HashMap<String, Integer> symbolMap = new HashMap<>();
 
 
     public Lexer(Reader input, String inputType){
@@ -50,15 +52,15 @@ public class Lexer {
 
     public Token GetToken(){
         try{
-            int r = 0;
+            int r;
             String str = "", comment = "";
-            boolean inComment = false;
             while((r = reader.read()) != -1){
                 char c = (char)r;
                 if(Character.isWhitespace(c)) {
                     // If character is whitespace
-                    if(str.matches("^(\"[a-zA-Z0-9\\s\']*(?!\")|\'[a-zA-Z0-9\\s\"]*(?!\'))")){
-                        //TODO: Symbols in string literal
+                    if(str.matches("(\"[^\"]*(?!\")|\'[^\']*(?!\'))")){
+                        //TODO: Add include case
+                        //TODO: Multi comments
                         if (c == ' '){
                             str += c;
                         }
@@ -88,36 +90,36 @@ public class Lexer {
                         // Handles all cases where there is whitespace after the symbol, expression, etc
                         if(str.equals("INCLUDE")){
                             str = "";
+                            this.inInclude = true;
                             continue;
                         }
-                        return readToken(str);
+                        if (readToken(str) != null){
+                            return this.token;
+                        }else{
+                            str = "";
+                            continue;
+                        }
                     }
                 }
-                if(!inComment){
+                if(!this.inComment){
                     str += c;
-                    if (c == '*' && commentReg.matcher(str).matches()){
+                    if (c == '*' && commentReg.matcher(str).matches() && !str.matches("^.*?([\'\"])+.*$")){
                         // Handle comments
                         str = str.substring(0, str.indexOf("(*"));
-                        inComment = true;
+                        this.inComment = true;
                         comment = "(*";
                         continue;
                     }
-                    Matcher m = symbolReg.matcher(Character.toString(c));
-                    Matcher m2 = keywordReg.matcher(str);
+                    Matcher m = symbolReg.matcher(str);
                     if (m.matches()){
                         // Handle Punctuations
                         if(!peekForSymbol(c)){
                             return readToken(str);
                         }
                     }
-                    if(str.matches("^[a-zA-Z0-9]+$")){
+                    if(str.matches("^[a-zA-Z0-9]+$") || str.matches("(\"[^\"]*\"|\'[^\']*\')")){
                         // Handle any alpha-numeric name
-                        if(peekForSymbol()){
-                            return readToken(str);
-                        }
-                    }
-                    if(str.matches("^(\"[a-zA-Z0-9\\s\']*\"|\'[a-zA-Z0-9\\s\"]*\')")){
-                        // Handle string literals
+                        // or string literal
                         if(peekForSymbol()){
                             return readToken(str);
                         }
@@ -125,8 +127,12 @@ public class Lexer {
                 }else{
                     comment += c;
                     if(c == ')' && endCommentReg.matcher(comment).matches()){
-                        inComment = false;
+                        this.inComment = false;
                         comment = "";
+                    }
+                    int next = peek();
+                    if (next == -1 && this.inComment){
+                        outputErrorMessage("unterminated comment");
                     }
                 }
             }
@@ -138,7 +144,7 @@ public class Lexer {
         return (new Token(Sym.EOF, "EOF"));
     }
 
-    private Token readToken(String str) throws ParseException {
+    private Token readToken(String str){
         token = null;
         Matcher m = keywordReg.matcher(str);
         Matcher m2 = symbolReg.matcher(str);
@@ -200,7 +206,7 @@ public class Lexer {
                 str += str.substring(0, 40);
             }
             token = new Token(Sym.T_ID, str);
-        }else if(str.matches("^(\"[a-zA-Z0-9\\s\']*\"|\'[a-zA-Z0-9\\s\"]*\')")){
+        }else if(str.matches("(\"[^\"]*\"|\'[^\']*\')")){
             //STR_LITERAL CASE
             // sequence of up to 80 characters not including surrounding quotes
             if (str.length() > 82){
@@ -210,9 +216,8 @@ public class Lexer {
             String temp = str.substring(1, str.length()-1);
             token = new Token(Sym.T_STR_LITERAL, temp);
         }else{
-            // Instructions ambiguous how to handle error messages
-            // i.e. program termination or continuation with a message?
-            outputErrorMessage("Unknown character '"+str+"'");
+            //Unknown character in lexeme
+            outputErrorMessage("Unknown character in lexeme '"+str+"'");
         }
         if (this.isLineBreak){
             this.isLineBreak = false;
@@ -229,10 +234,7 @@ public class Lexer {
         char t = (char)peek();
         String str = Character.toString(currentSymbol)+Character.toString(t);
         Matcher symbol = symbolReg.matcher(Character.toString(t));
-        if (symbol.find() && (symbolMap.containsKey(str.trim()) || str.equals("(*"))){
-            return true;
-        }
-        return false;
+        return symbol.find() && (symbolMap.containsKey(str.trim()) || str.equals("(*"));
     }
     private int peek(){
         int p = -1;
