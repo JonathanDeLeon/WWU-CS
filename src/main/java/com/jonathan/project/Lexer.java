@@ -11,21 +11,21 @@ public class Lexer {
     private String readerType;
     private Token token;
 
+    /* Flags to use */
     private int lineNumber = 1;
     private boolean isLineBreak = false;
     private boolean inInclude = false;
     private boolean inComment = false;
     private String errorMessage = "";
 
+    /* RESERVED Regular Expressions */
     private Pattern keywordReg =
             Pattern.compile("^(ARRAY|BEGIN|BY|CASE|CONST|DIV|DO|ELSE|ELSIF|"+
                     "END|EXIT|FOR|IF|IMPORT|IN|IS|LOOP|MOD|MODULE|NIL|OF|OR|"+
                     "POINTER|PROCEDURE|RECORD|REPEAT|RETURN|THEN|TO|TYPE|UNTIL|"+
                     "VAR|WHILE|WITH|BOOLEAN|CHAR|FALSE|INTEGER|NEW|REAL|TRUE)$");
-
     private Pattern symbolReg =
             Pattern.compile("^(&|\\^|:=|:|,|\\.\\.|\\.|\\||=|>|>=|\\{|\\[|\\(|<|<=|-|#|\\+|}|]|\\)|;|~|/|\\*)");
-
     private Pattern commentReg =
             Pattern.compile("^.*?(\\(\\*|\\*\\)|\\(\\*.*\\*\\)).*");
     private Pattern startCommentReg =
@@ -36,31 +36,39 @@ public class Lexer {
     private HashMap<String, Integer> symbolMap = new HashMap<>();
 
 
+    /**
+     * Constructors
+     */
     public Lexer(Reader input, String inputType){
         reader = new BufferedReader(input);
         readerType = inputType;
         createSymbolMap();
     }
-
     public Lexer(String fileName) throws FileNotFoundException {
         this(new FileReader(fileName), "'"+fileName+"'");
     }
-
     public Lexer(){
         this(new InputStreamReader(System.in), "(stdin)");
     }
 
+    /**
+     * Method called from LexerTester.java
+     * Parses the reader and extracts tokens on the lexemes
+     * Uses Token.java and Sym.java
+     * @return Token
+     */
     public Token GetToken(){
+        //TODO: Add include case
         try{
             int r;
             String str = "", comment = "";
+            //Loop through every character in the BufferReader
             while((r = reader.read()) != -1){
                 char c = (char)r;
                 if(Character.isWhitespace(c)) {
                     // If character is whitespace
                     if(str.matches("(\"[^\"]*(?!\")|\'[^\']*(?!\'))")){
-                        //TODO: Add include case
-                        //TODO: Multi comments
+                        // Case to handle white space when string literal has no ending quotes
                         if (c == ' '){
                             str += c;
                         }
@@ -77,6 +85,7 @@ public class Lexer {
                         }
                         continue;
                     }
+                    //Handle line breaks (new lines)
                     if(c == '\r' || c == '\n'){
                         this.isLineBreak = true;
                     }
@@ -102,9 +111,10 @@ public class Lexer {
                     }
                 }
                 if(!this.inComment){
+                    //When not in a comment scope, build lexeme
                     str += c;
                     if (c == '*' && commentReg.matcher(str).matches() && !str.matches("^.*?([\'\"])+.*$")){
-                        // Handle comments
+                        // Checks if lexer is entering a comment scope
                         str = str.substring(0, str.indexOf("(*"));
                         this.inComment = true;
                         comment = "(*";
@@ -112,8 +122,11 @@ public class Lexer {
                     }
                     Matcher m = symbolReg.matcher(str);
                     if (m.matches()){
-                        // Handle Punctuations
+                        // Handle reserved punctuations
                         if(!peekForSymbol(c)){
+                            //If next character is not a recognized symbol, get the token of current symbol
+                            //i.e. '*,' str='*' next=',' next is symbol but '*,' is not recognizable
+                            // thus return token punctuation '*'
                             return readToken(str);
                         }
                     }
@@ -121,15 +134,40 @@ public class Lexer {
                         // Handle any alpha-numeric name
                         // or string literal
                         if(peekForSymbol()){
+                            //If next character is a symbol, get the token of current string
+                            //i.e. 'n=100' str='n' next='=' next is symbol thus, return token identifier 'n'
                             return readToken(str);
                         }
                     }
                 }else{
+                    //When in a comment scope
                     comment += c;
                     if(c == ')' && endCommentReg.matcher(comment).matches()){
-                        this.inComment = false;
-                        comment = "";
+                        // Handles nested comments
+                        int start = 0;
+                        int end = 0;
+                        int lastIndex = 0;
+                        while(lastIndex != -1){
+                            lastIndex = comment.indexOf("(*", lastIndex);
+                            if (lastIndex != -1){
+                                start++;
+                                lastIndex += 2;
+                            }
+                        }
+                        lastIndex = 0;
+                        while(lastIndex != -1){
+                            lastIndex = comment.indexOf("*)", lastIndex);
+                            if (lastIndex != -1){
+                                end++;
+                                lastIndex += 2;
+                            }
+                        }
+                        if (start == end) {
+                            this.inComment = false;
+                            comment = "";
+                        }
                     }
+                    //If next character is EOF, output error
                     int next = peek();
                     if (next == -1 && this.inComment){
                         outputErrorMessage("unterminated comment");
@@ -139,27 +177,34 @@ public class Lexer {
         }catch(Exception e){
             errorMessage = e.getMessage();
         }finally {
+            //Output any error messages in the queue
             outputErrorMessage();
         }
+        //Terminate program
         return (new Token(Sym.EOF, "EOF"));
     }
 
+    /**
+     * Read given lexeme and match it to a token condition (case)
+     * @param str lexeme to match
+     * @return Token
+     */
     private Token readToken(String str){
         token = null;
         Matcher m = keywordReg.matcher(str);
         Matcher m2 = symbolReg.matcher(str);
-//        System.out.println("String: "+str);
         if (m.find() || m2.find()) {
+            //Lexeme matches RESERVED tokens
             if (symbolMap.containsKey(str) && symbolMap.get(str) >= 0) {
                 token = new Token(symbolMap.get(str), str);
             }
         }else if (str.matches("^([0-9]+[a-fA-F0-9]*[hH]*)$")){
             //INT_LITERAL CASE
-            // remove leading 0's; check for illegal hex;
-            // int_literal must be no more than 10 digits
+            // remove leading 0's
             if(str.startsWith("0")){
                 str = str.replaceFirst("^0+(?!$)", "");
             }
+            // check for illegal hex
             if (str.matches("^.*?[a-fA-F].*$") && !str.endsWith("H")){
                 outputErrorMessage("illegal hex integer literal");
                 if (str.length() > 10){
@@ -169,6 +214,7 @@ public class Lexer {
                     str += "H";
                 }
             }
+            // int_literal must be no more than 10 digits
             if ((str.length() > 10 && !str.endsWith("H")) || (str.length() > 11 && str.endsWith("H"))){
                 outputErrorMessage("integer literal too long");
                 if(str.endsWith("H")) {
@@ -180,10 +226,11 @@ public class Lexer {
             token = new Token(Sym.T_INT_LITERAL, str);
         }else if (str.matches("^([0-9]+[a-fA-F0-9]*[xX]*)$")){
             //CHAR_LITERAL CASE
-            // sequence of up to 3 hex digits followed by 'X'
+            // remove leading 0's
             if(str.startsWith("0")){
                 str = str.replaceFirst("^0+(?!$)", "");
             }
+            // sequence of up to 3 hex digits followed by 'X'
             if ((str.length() > 3 && !str.endsWith("X")) || (str.length() > 4 && str.endsWith("X"))) {
                 outputErrorMessage("character literal too long");
                 if (str.endsWith("X")) {
@@ -195,12 +242,12 @@ public class Lexer {
             token = new Token(Sym.T_CHAR_LITERAL, str);
         }else if (str.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             //IDENTIFIER CASE
-            // sequence of up to 40 characters
+            // Process EOF from System.in
             if (str.equals("EOF")) {
-                // Process EOF from System.in
                 System.out.println("Program terminated");
                 return (new Token(Sym.EOF, "EOF"));
             }
+            // sequence of up to 40 characters
             if (str.length() > 40) {
                 outputErrorMessage("identifier too long");
                 str += str.substring(0, 40);
@@ -213,12 +260,14 @@ public class Lexer {
                 outputErrorMessage("string literal too long");
                 str = str.substring(0,81)+ str.charAt(str.length()-1);
             }
+            //Do not return surrounding quotes
             String temp = str.substring(1, str.length()-1);
             token = new Token(Sym.T_STR_LITERAL, temp);
         }else{
-            //Unknown character in lexeme
+            //Unknown character in a lexeme
             outputErrorMessage("Unknown character in lexeme '"+str+"'");
         }
+        //Add lineNumber on a linebreak
         if (this.isLineBreak){
             this.isLineBreak = false;
             this.lineNumber++;
@@ -227,6 +276,11 @@ public class Lexer {
 
     }
 
+    /**
+     * Determine if next character in reader is a reserved punctuation
+     * Use overloaded method
+     * @return boolean
+     */
     private boolean peekForSymbol(){
         return peekForSymbol(Character.MIN_VALUE);
     }
@@ -236,6 +290,12 @@ public class Lexer {
         Matcher symbol = symbolReg.matcher(Character.toString(t));
         return symbol.find() && (symbolMap.containsKey(str.trim()) || str.equals("(*"));
     }
+
+    /**
+     * Bread and butter of the program
+     * Peeks at the next character in the reader
+     * @return int ASCII code of next character
+     */
     private int peek(){
         int p = -1;
         try {
@@ -248,6 +308,9 @@ public class Lexer {
         return p;
     }
 
+    /**
+     * Initialize HashMap of RESERVED tokens
+     */
     private void createSymbolMap() {
         // Adding Oberon keywords
         symbolMap.put("ARRAY", Sym.T_ARRAY);
@@ -321,6 +384,10 @@ public class Lexer {
         symbolMap.put("*", Sym.T_STAR);
     }
 
+    /**
+     * Output error messages either in the queue or a specific message using standard output
+     * Uses overloaded method
+     */
     private void outputErrorMessage(){
         outputErrorMessage(this.errorMessage);
         this.errorMessage = "";
@@ -329,216 +396,4 @@ public class Lexer {
         if (message.length() > 0)
             System.out.println("Error, "+this.readerType+", line "+(this.lineNumber)+": "+message);
     }
-    /*
-    Using hash map in place of switch statement
-    public int getTokenTypeByString(String keyword) {
-        int tokenType = -1;
-        switch (keyword){
-            case "ARRAY":
-                tokenType = Sym.T_ARRAY;
-                break;
-            case "BEGIN":
-                tokenType = Sym.T_BEGIN;
-                break;
-            case "BY":
-                tokenType = Sym.T_BY;
-                break;
-            case "CASE":
-                tokenType = Sym.T_CASE;
-                break;
-            case "CONST":
-                tokenType = Sym.T_CONST;
-                break;
-            case "DIV":
-                tokenType = Sym.T_DIV;
-                break;
-            case "DO":
-                tokenType = Sym.T_DO;
-                break;
-            case "ELSE":
-                tokenType = Sym.T_ELSE;
-                break;
-            case "ELSIF":
-                tokenType = Sym.T_ELSIF;
-                break;
-            case "END":
-                tokenType = Sym.T_END;
-                break;
-            case "EXIT": tokenType = Sym.T_EXIT;
-                break;
-            case "FOR":
-                tokenType = Sym.T_FOR;
-                break;
-            case "IF":
-                tokenType = Sym.T_IF;
-                break;
-            case "IMPORT":
-                tokenType = Sym.T_IMPORT;
-                break;
-            case "IN":
-                tokenType = Sym.T_IN;
-                break;
-            case "IS":
-                tokenType = Sym.T_IS;
-                break;
-            case "LOOP":
-                tokenType = Sym.T_LOOP;
-                break;
-            case "MOD":
-                tokenType = Sym.T_MOD;
-                break;
-            case "MODULE":
-                tokenType = Sym.T_MODULE;
-                break;
-            case "NIL":
-                tokenType = Sym.T_NIL;
-                break;
-            case "OF":
-                tokenType = Sym.T_OF;
-                break;
-            case "OR":
-                tokenType = Sym.T_OR;
-                break;
-            case "POINTER":
-                tokenType = Sym.T_POINTER;
-                break;
-            case "PROCEDURE":
-                tokenType = Sym.T_PROCEDURE;
-                break;
-            case "RECORD":
-                tokenType = Sym.T_RECORD;
-                break;
-            case "REPEAT":
-                tokenType = Sym.T_REPEAT;
-                break;
-            case "RETURN":
-                tokenType = Sym.T_RETURN;
-                break;
-            case "THEN":
-                tokenType = Sym.T_THEN;
-                break;
-            case "TO":
-                tokenType = Sym.T_TO;
-                break;
-            case "TYPE":
-                tokenType = Sym.T_TYPE;
-                break;
-            case "UNTIL":
-                tokenType = Sym.T_UNTIL;
-                break;
-            case "VAR":
-                tokenType = Sym.T_VAR;
-                break;
-            case "WHILE":
-                tokenType = Sym.T_WHILE;
-                break;
-            case "WITH":
-                tokenType = Sym.T_WITH;
-                break;
-            case "BOOLEAN":
-                tokenType = Sym.T_BOOLEAN;
-                break;
-            case "CHAR":
-                tokenType = Sym.T_CHAR;
-                break;
-            case "FALSE":
-                tokenType = Sym.T_FALSE;
-                break;
-            case "INTEGER":
-                tokenType = Sym.T_INTEGER;
-                break;
-            case "NEW":
-                tokenType = Sym.T_NEW;
-                break;
-            case "REAL":
-                tokenType = Sym.T_REAL;
-                break;
-            case "TRUE":
-                tokenType = Sym.T_TRUE;
-                break;
-            case "&":
-                tokenType = Sym.T_AMPERSAND;
-                break;
-            case "^":
-                tokenType = Sym.T_ARROW;
-                break;
-            case ":=":
-                tokenType = Sym.T_ASSIGN;
-                break;
-            case "|":
-                tokenType = Sym.T_BAR;
-                break;
-            case ":":
-                tokenType = Sym.T_COLON;
-                break;
-            case ",":
-                tokenType = Sym.T_COMMA;
-                break;
-            case "..":
-                tokenType = Sym.T_DOTDOT;
-                break;
-            case ".":
-                tokenType = Sym.T_DOT;
-                break;
-            case "=":
-                tokenType = Sym.T_EQU;
-                break;
-            case ">":
-                tokenType = Sym.T_GT;
-                break;
-            case ">=":
-                tokenType = Sym.T_GTE;
-                break;
-            case "{":
-                tokenType = Sym.T_LBRACE;
-                break;
-            case "[":
-                tokenType = Sym.T_LBRACKET;
-                break;
-            case "(":
-                tokenType = Sym.T_LPAREN;
-                break;
-            case "<":
-                tokenType = Sym.T_LT;
-                break;
-            case "<=":
-                tokenType = Sym.T_LTE;
-                break;
-            case "-":
-                tokenType = Sym.T_MINUS;
-                break;
-            case "#":
-                tokenType = Sym.T_NEQ;
-                break;
-            case "+":
-                tokenType = Sym.T_PLUS;
-                break;
-            case "}":
-                tokenType = Sym.T_RBRACE;
-                break;
-            case "]":
-                tokenType = Sym.T_RBRACKET;
-                break;
-            case ")":
-                tokenType = Sym.T_RPAREN;
-                break;
-            case ";":
-                tokenType = Sym.T_SEMI;
-                break;
-            case "~":
-                tokenType = Sym.T_TILDE;
-                break;
-            case "/":
-                tokenType = Sym.T_SLASH;
-                break;
-            case "*":
-                tokenType = Sym.T_STAR;
-                break;
-            default:
-                tokenType = Sym.T_ID;
-                break;
-        }
-        return tokenType;
-    }
-    */
 }
