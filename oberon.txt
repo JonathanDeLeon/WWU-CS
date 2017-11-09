@@ -1,9 +1,6 @@
 (* Buffer.oberon
 (**)
 *)
-INCLUDE "test
-
-";
 MODULE Buffer;
 
   CONST N = 00100;
@@ -35,5 +32,4 @@ MODULE Buffer;
 BEGIN
   n := 0; in := 0; out := 0;
   nonempty := FALSE; nonfull := TRUE
-  "(*"
 END Buffer.

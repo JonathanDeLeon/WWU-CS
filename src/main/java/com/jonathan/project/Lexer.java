@@ -58,7 +58,6 @@ public class Lexer {
      * @return Token
      */
     public Token GetToken(){
-        //TODO: Add include case
         try{
             int r;
             String str = "", comment = "";
@@ -136,7 +135,11 @@ public class Lexer {
                         if(peekForSymbol()){
                             //If next character is a symbol, get the token of current string
                             //i.e. 'n=100' str='n' next='=' next is symbol thus, return token identifier 'n'
-                            return readToken(str);
+                            if (readToken(str) != null){
+                                return this.token;
+                            }else{
+                                str = "";
+                            }
                         }
                     }
                 }else{
@@ -191,6 +194,24 @@ public class Lexer {
      */
     private Token readToken(String str){
         token = null;
+        //Open include files if they exist and scan them
+        if (this.inInclude){
+            this.inInclude = false;
+            if(str.matches("(\"[^\"]*\"|\'[^\']*\')")){
+                //Remove outer quotes in the string literal
+                String temp = str.substring(1, str.length()-1);
+                try {
+                    Lexer lexer = new Lexer(temp);
+                    LexerTester lexerTester = new LexerTester(lexer);
+                    lexerTester.Run();
+                } catch (FileNotFoundException e) {
+                    outputErrorMessage("bad include file "+str);
+                }
+            }else{
+                outputErrorMessage("illegal include directive '"+str+"'");
+            }
+            str = "";
+        }
         Matcher m = keywordReg.matcher(str);
         Matcher m2 = symbolReg.matcher(str);
         if (m.find() || m2.find()) {
@@ -265,7 +286,8 @@ public class Lexer {
             token = new Token(Sym.T_STR_LITERAL, temp);
         }else{
             //Unknown character in a lexeme
-            outputErrorMessage("Unknown character in lexeme '"+str+"'");
+            if(str.length() > 0)
+                outputErrorMessage("Unknown character in lexeme '"+str+"'");
         }
         //Add lineNumber on a linebreak
         if (this.isLineBreak){
