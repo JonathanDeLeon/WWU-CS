@@ -1,9 +1,48 @@
-Compile project to byte code
-mvn compile
+#Oberon Lexical Analyzer
 
-Build project and execute main in Oberon.java
+This Lexical Analyzer was built in Java for `CPTR354 Compilers and Programming Languages` at Walla Walla University. 
+The goal of the project was to design and create a lexer for the programming language `Oberon-2`. 
+You can [read more about Oberon-2](http://cseweb.ucsd.edu/classes/fa00/cse131a/oberon2.htm).
+
+Coded in Java using Maven as a project manager, the specifications are as follows:
+* Recognize lexemes(patterns) from an input stream and process them as a set of Oberon tokens
+* Ignore characters we don't care about
+* Report lexical errors 
+
+There are five classes in the project folder: 
+####Sym.java
+Contains valid Oberon token codes
+####Token.java
+Token class to be returned by `GetToken()`
+####Lexer.java
+Bread and butter of the project
+####LexerTester.java
+Test program for lexer
+####Oberon.java
+Class with a `main()` method that instantiates a Lexer passed on to the LexerTester
+
+
+A thorough specification sheet for the project requirements [can be found here](http://cseweb.ucsd.edu/classes/fa00/cse131a/)
+
+>Note: If you follow the link, the specs are under the tab **Project 1** on the left sidebar
+##Setup
+As mentioned, the project uses Apache Maven to compile and run the project. 
+Here are a list of useful maven commands:
+
+Compile project to byte code and output to the target directory
+```
+mvn compile
+```
+Compile and package project into a jar and output to the target directory
+```
 mvn package
+```
+Execute main in Oberon.java; project must be compiled first
+```
 mvn exec:java
+```
 
 Remove target directory
+```
 mvn clean
+```
