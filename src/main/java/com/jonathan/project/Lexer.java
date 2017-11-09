@@ -1,11 +1,16 @@
 package com.jonathan.project;
 
 import java.io.*;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Lexer class analyzes a given stream (file or sys.in) performs the basic functions:
+ * 1) recognizes patterns returning them as Oberon Tokens
+ * 2) Discards inputs not recognizable
+ * 3) Reports lexical errors
+ */
 public class Lexer {
     private Reader reader;
     private String readerType;

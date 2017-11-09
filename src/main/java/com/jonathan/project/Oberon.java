@@ -4,6 +4,13 @@ package com.jonathan.project;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+/**
+ * Oberon class has a main method that instantiates a Lexer instance then passes
+ * the object to the LexerTester instance to run the program
+ * The main method accepts files as arguments to be used by the Lexer OR
+ * the default oberon.txt in the project folder if it exists OR
+ * standard input stream
+ */
 public class Oberon {
     public static void main(String[] args){
         Lexer lexer = null;
