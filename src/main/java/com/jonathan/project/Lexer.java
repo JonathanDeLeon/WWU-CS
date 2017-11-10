@@ -12,9 +12,11 @@ import java.util.regex.Pattern;
  * 3) Reports lexical errors
  */
 public class Lexer {
+    /* Properties */
     private Reader reader;
     private String readerType;
     private Token token;
+    private HashMap<String, Integer> symbolMap = new HashMap<>();
 
     /* Flags to use */
     private int lineNumber = 1;
@@ -37,9 +39,6 @@ public class Lexer {
             Pattern.compile("^.*?(\\(\\*).*");
     private Pattern endCommentReg =
             Pattern.compile("^.*?(\\*\\)).*");
-
-    private HashMap<String, Integer> symbolMap = new HashMap<>();
-
 
     /**
      * Constructors
@@ -271,7 +270,7 @@ public class Lexer {
             // Process EOF from System.in
             if (str.equals("EOF")) {
                 System.out.println("Program terminated");
-                return (new Token(Sym.EOF, "EOF"));
+                return token = new Token(Sym.EOF, "EOF");
             }
             // sequence of up to 40 characters
             if (str.length() > 40) {

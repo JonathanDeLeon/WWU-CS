@@ -1,6 +1,7 @@
 (* Buffer.oberon
 (**)
 *)
+INCLUDE "include.txt";
 MODULE Buffer;
 
   CONST N = 00100;

@@ -1,1 +1,1 @@
-MODULE Buffer;
+CONST N = 500;

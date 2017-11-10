@@ -38,9 +38,15 @@ Compile and package project into a jar and output to the target directory
 ```
 mvn package
 ```
-Execute main in Oberon.java; project must be compiled first
+Execute main in Oberon.java with the possibility of adding arguments such as files to be opened.
+There are text files that exist in the project `oberon.txt` and `include.txt`. The first file has an `INCLUDE` statement
+for the second file.  If no file is specified, main will use standard input a.k.a `System.in`
+
+**Note**: Project must be compiled first
 ```
-mvn exec:java
+mvn exec:java [-Dexec.args="arguments"]
+EXAMPLE:
+mvn exec:java -Dexec.args="oberon.txt"
 ```
 
 Remove target directory
