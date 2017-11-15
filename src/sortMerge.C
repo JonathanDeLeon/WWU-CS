@@ -65,32 +65,32 @@ sortMerge::sortMerge(
         rec2[i] = new char[t2_str_sizes[i]];
     }
 
-    char* recResult[len_in1 * len_in2];
-
     int results = 0;
 
     s = scan1->getNext(rid1, (char*)&rec1, recsize1);
-    s = outFile->insertRecord((char*)&rec1, recsize1, rid1);
-    cout << "Post-assignment: '";
-    cout << *(int*)(rec1);
-    cout << "'" << endl;
+//    s = outFile->insertRecord((char*)&rec1, recsize1, rid1);
+//    cout << "Post-assignment: '";
+//    cout << *(int*)(rec1);
+//    cout << "'" << endl;
 
     if(s == OK) {
         s = scan2->getNext(rid2, (char*)&rec2, recsize2);
         ridTmp = rid2;
     }
-
     while(s == OK) {
-        if(rec1[join_col_in1] == rec2[join_col_in2]) {
-            recResult[results] = strcat((char *)&rec1, (char *)&rec2);
-            results++;
+        if(*(int*)(rec1) == *(int*)(rec2)) {
+            cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
+            //TODO: Append records
+            s = outFile->insertRecord((char*)&rec1, recsize1, rid1);
             s = scan2->getNext(rid2, (char*)&rec2, recsize2);
         }
-        else if(rec1[join_col_in1] > rec2[join_col_in2])  {
+        else if(*(int*)(rec1) > *(int*)(rec2))  {
+            cout << *(int*)(rec1) << " > " << *(int*)(rec2) << endl;
             s = scan2->getNext(rid2, (char*)&rec2, recsize2);
             ridTmp = rid2;
         }
         else {
+            cout << *(int*)(rec1) << " < " << *(int*)(rec2) << endl;
             s = scan1->getNext(rid1, (char*)&rec1, recsize1);
             if(s == OK) {
                 s = scan2->position(ridTmp);
@@ -100,11 +100,6 @@ sortMerge::sortMerge(
     }
 
 //    scan1->getNext(rid1, (char*)&rec1, recsize1);
-
-//    RID rid;
-//    for(int i = 0; i < results; i++) {
-//        s = outFile->insertRecord((char*)&recResult[i], recsize1+recsize2, rid);
-//    }
 
 
     delete scan1;
