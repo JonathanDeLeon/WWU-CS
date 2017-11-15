@@ -62,7 +62,7 @@ sortMerge::sortMerge(
 //    char* rec1 = new char[recsize1];
 
     char* rec2[len_in2];
-    for(int i = 0; i < len_in1; i++) {
+    for(int i = 0; i < len_in2; i++) {
         rec2[i] = new char[t2_str_sizes[i]];
     }
 
@@ -99,8 +99,6 @@ sortMerge::sortMerge(
             }
         }
     }
-
-//    scan1->getNext(rid1, (char*)&rec1, recsize1);
 
 
     delete scan1;
