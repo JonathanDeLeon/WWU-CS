@@ -40,6 +40,7 @@ sortMerge::sortMerge(
     Scan* scan1 = sorted1->openScan(s);
     Scan* scan2 = sorted2->openScan(s);
 
+    RID rid;
     RID rid1;
     RID rid2;
     RID ridTmp;
@@ -81,7 +82,7 @@ sortMerge::sortMerge(
         if(*(int*)(rec1) == *(int*)(rec2)) {
             cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
             //TODO: Append records
-            s = outFile->insertRecord((char*)&rec1, recsize1, rid1);
+            s = outFile->insertRecord((char*)&rec1, recsize1+recsize2, rid);
             s = scan2->getNext(rid2, (char*)&rec2, recsize2);
         }
         else if(*(int*)(rec1) > *(int*)(rec2))  {
