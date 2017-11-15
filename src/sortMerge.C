@@ -66,7 +66,7 @@ sortMerge::sortMerge(
         rec2[i] = new char[t2_str_sizes[i]];
     }
 
-    char* recResult = new char[recsize1+recsize2+1];
+    char* recResult = new char[recsize1+recsize2];
 //    char recResult[recsize1+recsize2];
 
 
