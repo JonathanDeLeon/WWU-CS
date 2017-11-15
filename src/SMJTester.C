@@ -64,7 +64,7 @@ char*		files[] = { "file0", "file1", "file2", "file3", "file4" };
 void createFiles()
 {
 	struct _rec rec;
-	memcpy(rec.filler,"    ",4);
+	memcpy(rec.filler," a  ",4);
 	for (int i=0; i< NUMFILES; i++)
 	{
 		Status		s;
