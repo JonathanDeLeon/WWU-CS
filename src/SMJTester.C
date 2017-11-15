@@ -121,7 +121,7 @@ Status test(int t)
 	cout << "------------ Test " << t << " ---------------" << endl;
 	for (s = scan->getNext(rid, rec, len); s == OK; s = scan->getNext(rid, rec, len)) 
 	{
-	  cout << (*((struct _rec*)&rec)).key << "\t" << (*((struct _rec*)&rec[8])).key << endl;
+	  cout << (*((struct _rec*)&rec)).key << (*((struct _rec*)&rec)).filler << (*((struct _rec*)&rec[8])).key << endl;
 	}
 	cout << "-------- Test " << t << " completed --------" << endl;
 	delete scan;
