@@ -11,11 +11,6 @@ static const char* ErrMsgs[] = 	{};
 
 static error_string_table ErrTable( JOINS, ErrMsgs );
 
-struct _rec {
-    int	key;
-    char	filler[4];
-};
-
 sortMerge::sortMerge(
     char*           filename1,      // Name of HeapFile for relation R
     int             len_in1,        // # of columns in R.
@@ -38,33 +33,74 @@ sortMerge::sortMerge(
     char* filename2_sorted = "sorted2";
     HeapFile* sorted1 = new HeapFile(filename1_sorted, s);
     HeapFile* sorted2 = new HeapFile(filename2_sorted, s);
+    HeapFile* outFile = new HeapFile(filename3, s);
     Sort* sort1 = new Sort(filename1, filename1_sorted, len_in1, in1, t1_str_sizes, join_col_in1, order, amt_of_mem, s);
     Sort* sort2 = new Sort(filename2, filename2_sorted, len_in2, in2, t2_str_sizes, join_col_in2, order, amt_of_mem, s);
 
     Scan* scan1 = sorted1->openScan(s);
     Scan* scan2 = sorted2->openScan(s);
 
-    RID rid;
-    int sortlen = amt_of_mem*MINIBASE_PAGESIZE; 	// The byte size of memory allocated.
-    char* _sort_area = new char[sortlen]; 		// Allocated memory.
+    RID rid1;
+    RID rid2;
+    RID ridTmp;
 
-
-    int recsize = 0;
+    int recsize1 = 0;
     for(int i = 0; i < sizeof(t1_str_sizes)/sizeof(t1_str_sizes[0]); i++) {
-        recsize += t1_str_sizes[i];
+        recsize1 += t1_str_sizes[i];
     }
 
-    struct _rec rec1;
-    memcpy(rec1.filler,"    ", 4);
+    int recsize2 = 0;
+    for(int i = 0; i < sizeof(t2_str_sizes)/sizeof(t2_str_sizes[0]); i++) {
+        recsize2 += t1_str_sizes[i];
+    }
 
-    HeapFile* outFile = new HeapFile(filename3, s);
+    char* rec1[len_in1];
+    for(int i = 0; i < len_in1; i++) {
+        rec1[i] = new char[t1_str_sizes[i]];
+    }
 
-    char rec[recsize];
+    char* rec2[len_in1];
+    for(int i = 0; i < len_in1; i++) {
+        rec1[i] = new char[t1_str_sizes[i]];
+    }
 
-    scan1->getNext(rid, rec, recsize);
-    rec1.key = (*((struct _rec*)&rec)).key;
-    s = outFile->insertRecord((char*)&rec1,sizeof(rec1),rid);
+    char* recResult[len_in1 * len_in2];
 
+    int results = 0;
+
+    cout << *rec1;
+    s = scan1->getNext(rid1, (char*)&rec1, recsize1);
+//    cout << *rec1;
+    if(s == OK) {
+        s = scan2->getNext(rid2, (char*)&rec2, recsize2);
+        ridTmp = rid2;
+    }
+
+    while(s == OK) {
+        if(rec1[join_col_in1] == rec2[join_col_in2]) {
+            recResult[results] = strcat((char *)&rec1, (char *)&rec2);
+            results++;
+            s = scan2->getNext(rid2, (char*)&rec2, recsize2);
+        }
+        else if(rec1[join_col_in1] > rec2[join_col_in2])  {
+            s = scan2->getNext(rid2, (char*)&rec2, recsize2);
+            ridTmp = rid2;
+        }
+        else {
+            s = scan1->getNext(rid1, (char*)&rec1, recsize1);
+            if(s == OK) {
+                s = scan2->position(ridTmp);
+                s = scan2->getNext(rid2, (char*)&rec2, recsize2);
+            }
+        }
+    }
+
+//    scan1->getNext(rid1, (char*)&rec1, recsize1);
+
+    RID rid;
+    for(int i = 0; i < results; i++) {
+        s = outFile->insertRecord((char*)&recResult[i], recsize1+recsize2, rid);
+    }
 
 
     delete scan1;
