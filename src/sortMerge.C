@@ -72,6 +72,7 @@ sortMerge::sortMerge(
         s = scan2->getNext(rid2, rec2, recsize2);
         ridTmp = rid2;
     }
+    char* rec[len_in1+len_in2];
     while(s == OK) {
         if(*(int*)(rec1) == *(int*)(rec2)) {
            // cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
