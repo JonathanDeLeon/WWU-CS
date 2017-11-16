@@ -11,6 +11,10 @@ static const char* ErrMsgs[] = 	{};
 
 static error_string_table ErrTable( JOINS, ErrMsgs );
 
+struct _rec {
+    int	key;
+    char	filler[4];
+};
 sortMerge::sortMerge(
     char*           filename1,      // Name of HeapFile for relation R
     int             len_in1,        // # of columns in R.
@@ -78,21 +82,26 @@ sortMerge::sortMerge(
     }
     while(s == OK) {
         if(*(int*)(rec1) == *(int*)(rec2)) {
-            cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
+//            cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
             //TODO: Append records
+            cout << "filler1: " << "'" <<(*((struct _rec*)&rec1)).filler << "'" << endl;
+            cout << "filler2: " << "'" <<(*((struct _rec*)&rec2)).filler << "'" << endl;
             memcpy(recResult, (char*)&rec1, recsize1);
+//            cout << "filler: " << "'" <<(*((struct _rec*)&recResult[0])).filler << "'" << endl;
             memcpy(recResult+recsize1, (char*)&rec2, recsize2);
-
+//            cout << (*((struct _rec*)&recResult)).key << (*((struct _rec*)&recResult)).filler << (*((struct _rec*)&recResult[8])).key << (*((struct _rec*)&recResult[8])).filler << endl;
+//            cout << "keys: " << (*((struct _rec*)&recResult[0])).key << " - " << (*((struct _rec*)&recResult[8])).key << endl;
+//            cout << "filler: " << "'" <<(*((struct _rec*)&recResult[0])).filler << "' - '" << (*((struct _rec*)&recResult[8])).filler << "'" << endl;
             s = outFile->insertRecord(recResult, recsize1+recsize2, rid);
             s = scan2->getNext(rid2, (char*)&rec2, recsize2);
         }
         else if(*(int*)(rec1) > *(int*)(rec2))  {
-            cout << *(int*)(rec1) << " > " << *(int*)(rec2) << endl;
+//            cout << *(int*)(rec1) << " > " << *(int*)(rec2) << endl;
             s = scan2->getNext(rid2, (char*)&rec2, recsize2);
             ridTmp = rid2;
         }
         else {
-            cout << *(int*)(rec1) << " < " << *(int*)(rec2) << endl;
+//            cout << *(int*)(rec1) << " < " << *(int*)(rec2) << endl;
             s = scan1->getNext(rid1, (char*)&rec1, recsize1);
             if(s == OK) {
                 s = scan2->position(ridTmp);

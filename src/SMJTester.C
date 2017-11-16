@@ -64,7 +64,7 @@ char*		files[] = { "file0", "file1", "file2", "file3", "file4" };
 void createFiles()
 {
 	struct _rec rec;
-	memcpy(rec.filler," a  ",4);
+	memcpy(rec.filler,"abcd",4);
 	for (int i=0; i< NUMFILES; i++)
 	{
 		Status		s;
@@ -121,7 +121,7 @@ Status test(int t)
 	cout << "------------ Test " << t << " ---------------" << endl;
 	for (s = scan->getNext(rid, rec, len); s == OK; s = scan->getNext(rid, rec, len)) 
 	{
-	  cout << (*((struct _rec*)&rec)).key << (*((struct _rec*)&rec)).filler << (*((struct _rec*)&rec[8])).key << endl;
+	  cout << (*((struct _rec*)&rec)).key << (*((struct _rec*)&rec)).filler << (*((struct _rec*)&rec[8])).key << (*((struct _rec*)&rec[8])).filler << endl;
 	}
 	cout << "-------- Test " << t << " completed --------" << endl;
 	delete scan;
