@@ -59,25 +59,11 @@ sortMerge::sortMerge(
         recsize2 += t2_str_sizes[i];
     }
 
-//    char* rec1[len_in1];
-//    for(int i = 0; i < len_in1; i++) {
-//        rec1[i] = new char[t1_str_sizes[i]];
-//    }
     char* rec1 = new char[recsize1];
-    memset(rec1, 0, recsize1);
-//    rec1 = "";
 
-//    char* rec2[len_in2];
-//    for(int i = 0; i < len_in2; i++) {
-//        rec2[i] = new char[t2_str_sizes[i]];
-//    }
     char* rec2 = new char[recsize2];
-    memset(rec2, 0, recsize2);
-//    rec2 = "";
 
     char* recResult = new char[recsize1+recsize2+1];
-    memset(recResult, 0, recsize1+recsize2);
-//    char recResult[recsize1+recsize2];
 
 
     s = scan1->getNext(rid1, rec1, recsize1);
@@ -88,29 +74,25 @@ sortMerge::sortMerge(
     }
     while(s == OK) {
         if(*(int*)(rec1) == *(int*)(rec2)) {
-            memset(recResult, 0, recsize1+recsize2);
-//            cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
-            //TODO: Append records
-            cout << "filler1: " << "'" <<(*((struct _rec*)&rec1[0])).filler << "'" << endl;
-            cout << "filler2: " << "'" <<(*((struct _rec*)&rec2[0])).filler << "'" << endl;
+           // cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
             memcpy(recResult, &rec1[0], recsize1);
-//            cout << "filler: " << "'" <<(*((struct _rec*)&recResult[0])).filler << "'" << endl;
             memcpy(recResult+recsize1, &rec2[0], recsize2);
-            cout << "keys: " << (*((struct _rec*)&recResult[0])).key << " - " << (*((struct _rec*)&recResult[8])).key << endl;
-            cout << "filler: " << "'" <<(*((struct _rec*)&recResult[0])).filler << "' - '" << (*((struct _rec*)&recResult[8])).filler << "'" << endl;
             s = outFile->insertRecord(recResult, recsize1+recsize2, rid);
             s = scan2->getNext(rid2, rec2, recsize2);
         }
         else if(*(int*)(rec1) > *(int*)(rec2))  {
-//            cout << *(int*)(rec1) << " > " << *(int*)(rec2) << endl;
+           // cout << *(int*)(rec1) << " > " << *(int*)(rec2) << endl;
             s = scan2->getNext(rid2, rec2, recsize2);
             ridTmp = rid2;
         }
         else {
-//            cout << *(int*)(rec1) << " < " << *(int*)(rec2) << endl;
+           // cout << *(int*)(rec1) << " < " << *(int*)(rec2) << endl;
             s = scan1->getNext(rid1, rec1, recsize1);
             if(s == OK) {
                 s = scan2->position(ridTmp);
+                s = scan2->getNext(rid2, rec2, recsize2);
+                s = OK;
+            } else {
                 s = scan2->getNext(rid2, rec2, recsize2);
             }
         }
