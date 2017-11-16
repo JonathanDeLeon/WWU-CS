@@ -66,8 +66,6 @@ sortMerge::sortMerge(
         rec2[i] = new char[t2_str_sizes[i]];
     }
 
-    int results = 0;
-
     s = scan1->getNext(rid1, (char*)&rec1, recsize1);
 //    s = outFile->insertRecord((char*)&rec1, recsize1, rid1);
 //    cout << "Post-assignment: '";
@@ -78,11 +76,14 @@ sortMerge::sortMerge(
         s = scan2->getNext(rid2, (char*)&rec2, recsize2);
         ridTmp = rid2;
     }
+    char* rec[len_in1+len_in2];
     while(s == OK) {
         if(*(int*)(rec1) == *(int*)(rec2)) {
             cout << *(int*)(rec1) << " == " << *(int*)(rec2) << endl;
             //TODO: Append records
-            s = outFile->insertRecord((char*)&rec1, recsize1+recsize2, rid);
+            rec[0] = *rec1;
+            rec[8] = (*rec1);
+            s = outFile->insertRecord((char*)&rec, recsize1+recsize2, rid);
             s = scan2->getNext(rid2, (char*)&rec2, recsize2);
         }
         else if(*(int*)(rec1) > *(int*)(rec2))  {
