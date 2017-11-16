@@ -9,7 +9,7 @@ Coded in Java using Maven as a project manager, the specifications are as follow
 * Ignore characters we don't care about
 * Report lexical errors 
 
-There are five classes in the project folder: 
+There are five classe in the project folder: 
 #### Sym.java
 Contains valid Oberon token codes
 #### Token.java
@@ -27,7 +27,7 @@ A thorough specification sheet for the project requirements [can be found here](
 >Note: If you follow the link, the specs are under the tab **Project 1** on the left sidebar
 
 ## Setup
-As mentioned, the project uses Apache Maven to compile and run the project. 
+As mentioned, the project uses Apache Maven to compile and run the project. This is all done through the command line. 
 Here are a list of useful maven commands:
 
 Compile project to byte code and output to the target directory
