@@ -53,3 +53,5 @@ Remove target directory
 ```
 mvn clean
 ```
+
+javacc -OUTPUT_DIRECTORY=src/main/java/com/jonathan/project/ oberon.jj 
