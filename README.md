@@ -5,7 +5,7 @@ The goal of the project was to design and create a parser for the programming la
 You can [read more about Oberon-2](http://cseweb.ucsd.edu/classes/fa00/cse131a/oberon2.htm).
 
 Coded in Java using Maven as a project manager, the specifications are as follows:
-* Run your Oberon grammar file (supplied by us) through yacc/CUP to produce a parser. 
+* Run your Oberon grammar file `oberon.jj` through JavaCC to produce a parser. 
 * Interface your parser with your lexer from the last project, producing a program that will accept syntactically legal Oberon programs and reject illegal programs. 
 * Add error recovery actions to your parser to handle specific illegal inputs.
 
