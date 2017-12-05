@@ -36,7 +36,7 @@ public final class OberonParser implements OberonParserConstants { // Standard p
 /**************************************/
 /********** START OF GRAMMAR **********/
 /**************************************/
-  static final public 
+  static final public
 void translation_unit() throws ParseException {
     Module();
   }
@@ -1065,14 +1065,14 @@ void translation_unit() throws ParseException {
     }
   }
 
-/* NB: Because Arguments() always appears after Designator(), there 
+/* NB: Because Arguments() always appears after Designator(), there
    * will be a conflict if we get "(" Qualident() ")" - do we consume
    * this as part of the Designator(), or leave it for the Arguments()
    * The disambiguation in Designator() chooses the former, so the
    * semantic phase will have to disentangle this for function calls
    * with one (qualified) identifier as an argument.
    */
-  static final public 
+  static final public
 void Arguments() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case 61:{

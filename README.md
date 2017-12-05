@@ -1,30 +1,17 @@
-# Oberon Lexical Analyzer
+# Oberon Syntax Analyzer
 
-This Lexical Analyzer was built in Java for *CPTR354 Compilers and Programming Languages* at Walla Walla University. 
-The goal of the project was to design and create a lexer for the programming language `Oberon-2`. 
+This Syntax Analyzer was built in Java for *CPTR354 Compilers and Programming Languages* at Walla Walla University. 
+The goal of the project was to design and create a parser for the programming language `Oberon-2`. 
 You can [read more about Oberon-2](http://cseweb.ucsd.edu/classes/fa00/cse131a/oberon2.htm).
 
 Coded in Java using Maven as a project manager, the specifications are as follows:
-* Recognize lexemes(patterns) from an input stream and process them as a set of Oberon tokens
-* Ignore characters we don't care about
-* Report lexical errors 
+* Run your Oberon grammar file (supplied by us) through yacc/CUP to produce a parser. 
+* Interface your parser with your lexer from the last project, producing a program that will accept syntactically legal Oberon programs and reject illegal programs. 
+* Add error recovery actions to your parser to handle specific illegal inputs.
 
-There are five classes in the project folder: 
-#### Sym.java
-Contains valid Oberon token codes
-#### Token.java
-Token class to be returned by `GetToken()`
-#### Lexer.java
-Bread and butter of the project
-#### LexerTester.java
-Test program for lexer
-#### Oberon.java
-Class with a `main()` method that instantiates a Lexer passed on to the LexerTester
+A thorough specification sheet for the project requirements [can be found here](http://cseweb.ucsd.edu/classes/fa00/cse131a/parser.htm)
 
-
-A thorough specification sheet for the project requirements [can be found here](http://cseweb.ucsd.edu/classes/fa00/cse131a/)
-
->Note: If you follow the link, the specs are under the tab **Project 1** on the left sidebar
+>Note: If you follow the link, the specs are under the tab **Project 2** on the left sidebar
 
 ## Setup
 As mentioned, the project uses Apache Maven to compile and run the project. 
@@ -34,13 +21,8 @@ Compile project to byte code and output to the target directory
 ```
 mvn compile
 ```
-Compile and package project into a jar and output to the target directory
-```
-mvn package
-```
-Execute main in Oberon.java with the possibility of adding arguments such as files to be opened.
-There are text files that exist in the project `oberon.txt` and `include.txt`. The first file has an `INCLUDE` statement
-for the second file.  If no file is specified, main will use standard input a.k.a `System.in`
+Execute main in OberonParser.java with the possibility of adding arguments such as files to be opened.
+There are text files that exist in the project `oberon.txt`. If no file is specified, main will use standard input a.k.a `System.in`
 
 **Note**: Project must be compiled first
 ```
@@ -54,4 +36,7 @@ Remove target directory
 mvn clean
 ```
 
+The following terminal code built the parser using the JavaCC parser-builder
+```
 javacc -OUTPUT_DIRECTORY=src/main/java/com/jonathan/project/ oberon.jj 
+```
