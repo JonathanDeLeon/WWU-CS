@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * 2) Discards inputs not recognizable
  * 3) Reports lexical errors
  */
-public class Lexer extends OberonParserTokenManager {
+public class Lexer {
     /* Properties */
     private Reader reader;
     private SimpleCharStream stream;
