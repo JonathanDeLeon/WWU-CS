@@ -1335,7 +1335,8 @@ void Arguments() throws ParseException {
     }
     jj_initialized_once = true;
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
-    token_source = new OberonParserTokenManager(jj_input_stream);
+//    token_source = new OberonParserTokenManager(jj_input_stream);
+    token_source = new Lexer(stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
@@ -1368,7 +1369,8 @@ void Arguments() throws ParseException {
     }
     jj_initialized_once = true;
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
-    token_source = new OberonParserTokenManager(jj_input_stream);
+//    token_source = new OberonParserTokenManager(jj_input_stream);
+    token_source = new Lexer(stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;

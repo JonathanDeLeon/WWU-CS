@@ -987,6 +987,7 @@ static private void jjCheckNAddStates(int start, int end)
 
     input_stream = stream;
   }
+  public OberonParserTokenManager(){}
 
   /** Constructor. */
   public OberonParserTokenManager (SimpleCharStream stream, int lexState){
