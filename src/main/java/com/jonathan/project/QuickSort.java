@@ -20,14 +20,14 @@ public class QuickSort {
                index++;
 
                //Swap arr[index] and arr[i]
-//               System.out.println("Swapping "+arr[index]+" and "+arr[i]);
+               // System.out.println("Swapping "+arr[index]+" and "+arr[i]);
                int temp = arr[index];
                arr[index] = arr[i];
                arr[i] = temp;
            }
         }
         //Swap arr[index+1] and arr[high]
-//        System.out.println("Swapping "+arr[index+1]+" and "+arr[high]);
+        // System.out.println("Swapping "+arr[index+1]+" and "+arr[high]);
         int temp = arr[index+1];
         arr[index+1] = arr[high];
         arr[high] = temp;
