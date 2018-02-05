@@ -49,8 +49,11 @@ class BinaryTree:
             return self._internalPathLength(self.root)
 
     # Recursively sum the path length of each node
+    # Internal nodes are nodes with at least one child
     def _internalPathLength(self, node, length=0):
         if node is None:
+            return 0
+        elif node.left is None and node.right is None:
             return 0
         else:
             return (length+self._internalPathLength(node.left, length+1)+self._internalPathLength(node.right, length+1))
@@ -90,7 +93,7 @@ class BinaryTree:
 def main():
     tree = BinaryTree()
     tree.add(10)
-    for rand in range(5):
+    for rand in range(10):
         tree.add(random.randint(1,20))
 
     print(tree)
