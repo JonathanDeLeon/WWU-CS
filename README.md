@@ -25,7 +25,7 @@ Example output:
             4
     3
 
-Internal Path Length:  9
+Internal Path Length:  4
 ```
 Above tree is the same as:
 ```
@@ -36,5 +36,5 @@ Above tree is the same as:
       4    16
        \
         4
-Internal Path Length:  9
+Internal Path Length:  4
 ```
