@@ -53,8 +53,6 @@ class BinaryTree:
     def _internalPathLength(self, node, length=0):
         if node is None:
             return 0
-        elif node.left is None and node.right is None:
-            return 0
         else:
             return (length+self._internalPathLength(node.left, length+1)+self._internalPathLength(node.right, length+1))
 
@@ -70,6 +68,8 @@ class BinaryTree:
         # Print right branch
         if node.right is not None:
             ret += self.printTree(node.right, depth + 1)
+        else:
+			ret += "\n" + ("    "*(depth+1)) + "NULL"
 
         # Print own value
         ret += "\n" + ("    "*depth) + str(node.val)
@@ -77,6 +77,8 @@ class BinaryTree:
         # Print left branch
         if node.left is not None:
             ret += self.printTree(node.left, depth + 1)
+        else:
+			ret += "\n" + ("    "*(depth+1)) + "NULL"
 
         return ret
 
@@ -93,7 +95,7 @@ class BinaryTree:
 def main():
     tree = BinaryTree()
     tree.add(10)
-    for rand in range(10):
+    for rand in range(5):
         tree.add(random.randint(1,20))
 
     print(tree)
