@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env python
 # Jonathan De Leon
 # CPTR 454 Design & Analysis of Algorithms
 # HW 4: 5.3.10
