@@ -1,10 +1,10 @@
 # 2-3 Tree
 
 This program was built in Python for *CPTR 454 Design & Analysis of Algorithms* at Walla Walla University. It was the programming portion of Homework 5.
-The assignment was to write a program for constructing a 2-3 tree for a given list of n integers.
+The assignment was to write a program for constructing a 2-3 tree for a given list of *n* integers.
 
 ## Algorithm
-Algorithm first adds a key to a node and then checks if that node is full. Full node is when the # of keys == 3. 
+Algorithm first adds a key to a node and then checks if that node is full. Full node is when the # of `keys == 3`. 
 If the node is full, algorithm performs a middle split: moves middle key to parent node if exists, if not create one, 
 and moves last key into a new node while reassigning children nodes. Finally reassign root node of tree, if necessary.
 
@@ -32,7 +32,7 @@ Would you like to continue? (y/n) n
 Final Tree:
 ('Level 0', '[1] ')
 ```
-
+## Tree Output
 Example tree output:
 ```
 ('Level 0', '[9] ')
