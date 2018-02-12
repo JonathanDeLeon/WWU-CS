@@ -137,8 +137,25 @@ class TwoThreeTree:
 # Construct a 2-3 Tree
 def main():
     tree = TwoThreeTree()
-    for rand in range(15):
-        tree.insert(random.randint(1,20))
+    print("Welcome!\n")
+    isDefault = raw_input("Would you like to create tree with default random integers? (y/n) ")
+    if isDefault == "y":
+        for rand in range(15):
+            tree.insert(random.randint(1,30))
+    else:
+        print("Please create list of integers")
+        cont = "y"
+        while cont == "y":
+            try:
+                num = input("\nEnter integer to insert: ")
+                if type(num) == int:
+                    tree.insert(num)
+                print tree
+                cont = raw_input("Would you like to continue? (y/n) ")
+            except:
+                cont = "n"
+
+    print("\nFinal Tree:")
     print tree
 
 main()
