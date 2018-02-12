@@ -1,4 +1,3 @@
-# CPTR456-ComputerNetworks
 # Computer Networks: Programs
 
 This repository contains the various programming lab assignments for *CPTR 456 Computer Networks* at Walla Walla University.
