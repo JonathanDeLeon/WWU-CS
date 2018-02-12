@@ -17,7 +17,7 @@ To run the program in terminal:
 $ python two_three_tree.py
 ```
 
-Example input:
+Example input/output:
 ```
 Welcome!
 
