@@ -7,53 +7,156 @@
 # Assignment:
 # Write a program for constructing a 2-3 tree for a given list of n integers.
 
-# Class to represent a node 
-class Node:
-    def __init__(self, val):
-        self.keys = []
-        self.children = []
+import random
 
-
-# Class to represent a 2-3 Tree
 class TwoThreeTree:
+    """ Class to represent a 2-3 Tree """
+
+    class Node:
+        """ Class to represent a node """
+
+        def __init__(self):
+            self.keys = []
+            self.children = []
+            self.parent = None
+
+        @property
+        def is_full(self):
+            return self.size == 3 
+
+        @property
+        def size(self):
+            return len(self.keys)
+
+        @property
+        def num_children(self):
+            return len(self.children)
+
+        def add_key(self, value):
+            """
+            adds value to list; if node is full, then split
+            """
+            if value in self.keys:
+                return None
+            self.keys.append(value)
+            self.keys.sort()
+            if self.is_full:
+                self.split()
+
+        def add_child(self, new_node):
+            """
+            returns: an order list of child nodes
+            """
+            i = len(self.children) - 1
+            while i >= 0 and self.children[i].keys[0] > new_node.keys[0]:
+                i -= 1
+            return self.children[:i + 1]+ [new_node] + self.children[i + 1:]
+
+        def split(self):
+            """
+            1) If there is no parent; remove left and right keys into new nodes
+            2) If there is a parent; remove last key into a new node, move middle key to parent node
+            In both: Reorganize parent/child relationships
+            """
+            if self.parent is None:
+                # Create new child node of last key
+                val = self.keys.pop(self.size-1)
+                new_node_last = self.__class__()
+                new_node_last.add_key(val) 
+
+                # Create new child node of first key
+                val = self.keys.pop(0)
+                new_node_first = self.__class__()
+                new_node_first.add_key(val) 
+                
+                # Associate child nodes to new nodes created above
+                while self.num_children > 0:
+                    child = self.children.pop(0)
+                    if child.keys[0] <= self.keys[0]:
+                        new_node_first.children = new_node_first.add_child(child)
+                        child.parent = new_node_first
+                    else:
+                        new_node_last.children = new_node_last.add_child(child)
+                        child.parent = new_node_last
+                
+                # Set parent/child relationship
+                self.children = self.add_child(new_node_last)
+                self.children = self.add_child(new_node_first)
+                new_node_last.parent = self
+                new_node_first.parent = self
+            else:
+                parent = self.parent
+
+                # Create new child node of last key
+                val = self.keys.pop(self.size-1)
+                new_node_last = self.__class__()
+                new_node_last.add_key(val) 
+                parent.children = parent.add_child(new_node_last)
+                new_node_last.parent = parent
+
+                # Place middle key in parent
+                mid = self.keys.pop(1)
+                parent.add_key(mid)
+
+                # Reorganize child nodes 
+                while self.size == 1 and self.num_children > 2:
+                    child = self.children.pop(self.num_children-1)
+                    new_node_last.children = new_node_last.add_child(child)
+                    child.parent = new_node_last
+
+            return self
+
     def __init__(self):
-        self.root = None
+        self.root = self.Node()
 
-    # Below is printing pretty binary trees from 
-    # http://krenzel.org/articles/printing-trees
-    # Recursively print binary tree horizontally level by level
-    def printTree(self, node, depth=0):
-        ret = ""
+    def insert(self, val):
+        """
+        Traverses through tree to find the appropriate node
+        returns: node where value was inserted
+        """
+        node = self.root
+        while node.num_children > 0:
+            if val in node.keys:
+                return
+            i = node.size - 1
+            while i > 0 and val < node.keys[i] :
+                i -= 1
+            if val > node.keys[i]:
+                i += 1
 
-        if node is None:
-            return
+            node = node.children[i]
 
-        # Print right branch
-        if node.right is not None:
-            ret += self.printTree(node.right, depth + 1)
-        else:
-			ret += "\n" + ("    "*(depth+1)) + "NULL"
+        node.add_key(val)
+        return node
 
-        # Print own value
-        ret += "\n" + ("    "*depth) + str(node.val)
+    def print_order(self):
+        """Print a level-order representation."""
+        this_level = [self.root]
+        level = 0
+        while this_level:
+            next_level = []
+            output = ""
+            for node in this_level:
+                if node.children:
+                    next_level.extend(node.children)
+                if node.parent is not None:
+                    output += "Parent "+str(node.parent.keys)+":"
+                output += str(node.keys) + " "
+            print("Level "+str(level), output)
+            this_level = next_level
+            level += 1
 
-        # Print left branch
-        if node.left is not None:
-            ret += self.printTree(node.left, depth + 1)
-        else:
-			ret += "\n" + ("    "*(depth+1)) + "NULL"
-
-        return ret
-
-    def __str__(self, node=None, depth=0):
-        if self.root is None:
-            return "Tree is empty"
-        else:
-            return self.printTree(self.root)
+    def __str__(self):
+        self.print_order()
+        return ""
 
         
-# 1) Create TwoThree tree
+# Construct a 2-3 Tree
 def main():
     tree = TwoThreeTree()
+    for rand in range(20):
+        tree.insert(rand)
+    
+    print tree
 
 main()
