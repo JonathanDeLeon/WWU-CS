@@ -36,12 +36,12 @@ class TwoThreeTree:
             """
             adds value to list; if node is full, then split
             """
-            if value in self.keys:
-                return None
-            self.keys.append(value)
-            self.keys.sort()
-            if self.is_full:
-                self.split()
+            if value not in self.keys:
+                self.keys.append(value)
+                self.keys.sort()
+                if self.is_full:
+                    return self.split()
+            return self
 
         def add_child(self, new_node):
             """
@@ -54,64 +54,45 @@ class TwoThreeTree:
 
         def split(self):
             """
-            1) If there is no parent; remove left and right keys into new nodes
+            1) If there is no parent; create a new parent with middle node
             2) If there is a parent; remove last key into a new node, move middle key to parent node
             In both: Reorganize parent/child relationships
             """
             if self.parent is None:
-                # Create new child node of last key
-                val = self.keys.pop(self.size-1)
-                new_node_last = self.__class__()
-                new_node_last.add_key(val) 
-
-                # Create new child node of first key
-                val = self.keys.pop(0)
-                new_node_first = self.__class__()
-                new_node_first.add_key(val) 
-                
-                # Associate child nodes to new nodes created above
-                while self.num_children > 0:
-                    child = self.children.pop(0)
-                    if child.keys[0] <= self.keys[0]:
-                        new_node_first.children = new_node_first.add_child(child)
-                        child.parent = new_node_first
-                    else:
-                        new_node_last.children = new_node_last.add_child(child)
-                        child.parent = new_node_last
-                
-                # Set parent/child relationship
-                self.children = self.add_child(new_node_last)
-                self.children = self.add_child(new_node_first)
-                new_node_last.parent = self
-                new_node_first.parent = self
+                parent = self.__class__()
             else:
                 parent = self.parent
 
-                # Create new child node of last key
-                val = self.keys.pop(self.size-1)
-                new_node_last = self.__class__()
-                new_node_last.add_key(val) 
-                parent.children = parent.add_child(new_node_last)
-                new_node_last.parent = parent
+            # Create new child node of last key
+            val = self.keys.pop(self.size-1)
+            new_node_last = self.__class__()
+            new_node_last.add_key(val) 
 
-                # Place middle key in parent
-                mid = self.keys.pop(1)
-                parent.add_key(mid)
+            # Don't add same child node twice
+            if parent.num_children == 0:
+                parent.children = parent.add_child(self)
+                self.parent = parent
+            parent.children = parent.add_child(new_node_last)
+            new_node_last.parent = parent
 
-                # Reorganize child nodes 
-                while self.size == 1 and self.num_children > 2:
-                    child = self.children.pop(self.num_children-1)
-                    new_node_last.children = new_node_last.add_child(child)
-                    child.parent = new_node_last
+            # Place middle key in parent
+            mid = self.keys.pop(1)
+            node = parent.add_key(mid)
 
-            return self
+            # Reorganize child nodes 
+            while self.size == 1 and self.num_children > 2:
+                child = self.children.pop(self.num_children-1)
+                new_node_last.children = new_node_last.add_child(child)
+                child.parent = new_node_last
+
+            return node
 
     def __init__(self):
         self.root = self.Node()
 
     def insert(self, val):
         """
-        Traverses through tree to find the appropriate node
+        Traverse through tree to find the appropriate node
         returns: node where value was inserted
         """
         node = self.root
@@ -123,10 +104,12 @@ class TwoThreeTree:
                 i -= 1
             if val > node.keys[i]:
                 i += 1
-
             node = node.children[i]
 
-        node.add_key(val)
+        node = node.add_key(val)
+        # Set new root node if there was a split on old root node
+        if node and node.parent is None:
+            self.root = node
         return node
 
     def print_order(self):
@@ -154,9 +137,8 @@ class TwoThreeTree:
 # Construct a 2-3 Tree
 def main():
     tree = TwoThreeTree()
-    for rand in range(20):
-        tree.insert(rand)
-    
+    for rand in range(15):
+        tree.insert(random.randint(1,20))
     print tree
 
 main()
