@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Load in Dependencies -->
+        <script type='text/javascript' src='paper-full.min.js'></script>
+        <script type='text/javascript' src='jquery.min.js'></script>
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/css/materialize.min.css"  media="screen,projection"/>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/js/materialize.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                padding: 0px;
+                margin: 0px;
+                background: grey;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="game" width="500px" height="500px" style='background-color: white;'></canvas>
+        <script>
+            document.getElementById("game").width = document.body.scrollWidth;
+            document.getElementById("game").height = document.body.scrollHeight;
+        </script>
+        
+        <script type='text/paperscript' src='sprouts.js' canvas='game'></script>
+    </body>
+</html>
