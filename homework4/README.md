@@ -3,9 +3,6 @@
 This program was built in Python for *CPTR 454 Design & Analysis of Algorithms* at Walla Walla University. It was the programming portion of Homework 4.
 The assignment was to write a program for computing the internal path length of an extended binary tree. 
 
-> 
-
-
 Some things to note:
 * Binary Tree is printed horizontally level by level
 * Extended Binary Tree: A binary tree in which special nodes are added wherever a null subtree was present in the original tree.
