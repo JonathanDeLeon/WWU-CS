@@ -1,7 +1,7 @@
 # Quadratic Formula
 
 This program was built in Python for *CPTR 454 Design & Analysis of Algorithms* at Walla Walla University. It was the programming portion of Homework 10.
-The assignment was to write a program to solve the quadratic equation `ax<sup>2</sup> + bx + c = 0`
+The assignment was to write a program to solve the quadratic equation ax<sup>2</sup> + bx + c = 0
 
 Some things to note:
 * Program is intended to only use basic math operations (addition, subtraction, multiplication, division)
