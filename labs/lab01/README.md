@@ -26,23 +26,59 @@ Use your door code to access the lab.
 ![CS Lab Workspace](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_workspace.jpg)
 
 The table in the corner has light and power.
-Please use this to set up your lab.
 The CS Lab equipment can be found on the bottom of the bookshelf.
 
 ### Workbench
 ![CS Lab Workbench](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_workbench.jpg)
 
-Please return the eqipment to this shelf in the manner displayed in the picture.
+Please use this space to set up your lab.
 
 ### Equipment Storage
 ![CS Lab Equipment](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_equipment.jpg)
 
-Please return the eqipment to this shelf in the manner displayed in the picture.
-
+Return the eqipment to this shelf in the manner displayed in the picture.
 
 
 
 ## CS Lab Equipment
+
+
+### Laptops
+![CS Lab Laptop](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_laptop.jpg)
+
+Each laptop (4 total) has a power cable and mouse.
+The trackpads are not the best, so you may want to use the mouse.
+The batteries are basically dead in the laptops, so you will need to plug them in.
+
+### Cables and Power Supplies
+![CS Lab Equipement](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_equipment.jpg)
+
+Any cable and power supplies should be kept in this box.
+
+### Switches
+The lab has two types of switches.
+The first is an enterprise grade switch (2 total) and the second is a consumer grade switch.
+
+![CS Lab Switch 1](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_switch_1.jpg)
+
+Note: The left most port on the enterpise switch is a serial port for adminastration.
+The picture includes a RJ45 to Serial cable and a Serial to USB cable. 
+These two cables can be used manage the switches settings.
+
+![CS Lab Switch 3](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_switch_3.jpg)
+
+
+### Wifi Access Point and Routers
+![CS Lab Router](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_router.jpg)
+
+The routers will also function as wifi access points.
+
+### Various Sized Network Cables
+![CS Lab Cables](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_cables.jpg)
+
+
+
+
 
 
 
