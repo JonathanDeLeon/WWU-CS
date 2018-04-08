@@ -14,6 +14,11 @@ All you need is a Crimping tool, but wire cutters can be helpful.
 A network test is there to confirm you make a good cable.
 
 
+## Network Cabling Tutorial
+
+[CNet](https://www.cnet.com/how-to/how-to-make-your-own-ethernet-cable/) has a nice walkthrough on how to create cables.
+
+
 ## Requirements
 
 * Create two 1' cables (per student).
