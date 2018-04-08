@@ -51,6 +51,14 @@ Each laptop (4 total) has a power cable and mouse.
 The trackpads are not the best, so you may want to use the mouse.
 The batteries are basically dead in the laptops, so you will need to plug them in.
 
+<dl>
+  <dt>Username</dt>
+  <dd>cptrtech</dd>
+
+  <dt>password</dt>
+  <dd>cptr1892</dd>
+</dl>
+
 ### Cables and Power Supplies
 ![CS Lab Equipement](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_equipment.jpg)
 
