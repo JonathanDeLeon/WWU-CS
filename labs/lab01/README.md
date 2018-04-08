@@ -2,6 +2,8 @@
 
 The first lab is focused on getting you familiar with the CS Lab and the equipment.
 
+Note you may need to log in to [CS Lab Gitlab Server](https://gitlab.cs.wallawalla.edu/) to see the images.
+
 
 ## Setting Up Your Door Code
 
@@ -13,6 +15,7 @@ Log into [CS Lab Account Management](https://self-serve.cs.wallawalla.edu/) and 
 1. Log in using your WWU account information.
 1. Accept the Terms of Service.
 1. Go to the door code page and set your code.
+
 
 ## CS Lab
 
@@ -39,9 +42,7 @@ Please use this space to set up your lab.
 Return the eqipment to this shelf in the manner displayed in the picture.
 
 
-
 ## CS Lab Equipment
-
 
 ### Laptops
 ![CS Lab Laptop](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_laptop.jpg)
@@ -67,7 +68,6 @@ These two cables can be used manage the switches settings.
 
 ![CS Lab Switch 3](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_switch_3.jpg)
 
-
 ### Wifi Access Point and Routers
 ![CS Lab Router](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_router.jpg)
 
@@ -77,20 +77,15 @@ The routers will also function as wifi access points.
 ![CS Lab Cables](https://gitlab.cs.wallawalla.edu/cptr210/labs/raw/master/labs/lab01/images/cs_lab_cables.jpg)
 
 
-
-
-
-
-
-
 ## Requirements
 
 * Turn on two laptops
-  * Boot one labtop into Windows
+  * Boot one laptop into Windows
     * Note you will need to disable the firewall and enable DHCP.
   * Boot a second labtop into Linux
 * Log in using the administrator account
 * Connect the laptops via the Linksys Router
+  * Include a photo of the connected devices
 * Show the computers IP information using __ifconfig__ (Linux) and __ipconfig__ (Windows)
   * Include a screenshot showing network details for each labtop
 * Demonstrate they are connected using __ping__
@@ -103,3 +98,11 @@ Please document your process by taking pictures, screenshots and notes.
 Write up the instructions using Markdown in the __lab\_report.md__ file.
 This __README.md__ file is an example of markdown.
 Checkout this nice [cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) with common markdown formatting details.
+
+### Adding Images to the Report
+
+* Take your screenshots or photos.
+* Add them to the repository and push them to CS Lab Gitlab server.
+* Log into CS Lab Gitlab server and navigate to your image.
+* Right click and view image (only the image should show in the browser).
+* Copy the URL and put this into the image tag.
