@@ -23,4 +23,4 @@ The lab was focused on familiarizing ourselves with the equipment while creating
 ![Ubuntu Ping](https://gitlab.cs.wallawalla.edu/delejo/labs/raw/master/lab01/images/Ubuntu_Ping.jpg)
 
 ## Contributors
-@mattma
+@mamatt
