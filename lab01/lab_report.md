@@ -1,4 +1,4 @@
-# Lab 1
+# Lab 1 Report
 This lab was done by Jonathan De leon and Matthew Ma as part of the *CPTR 210 Data Communications and Networks* lab assignment.
 
 ## Background
