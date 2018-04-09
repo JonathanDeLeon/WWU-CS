@@ -12,10 +12,8 @@ The lab was focused on familiarizing ourselves with the equipment while creating
 ![Ethernet Connections 1](https://gitlab.cs.wallawalla.edu/delejo/labs/raw/master/lab01/images/Router_Connections.jpg)
 ![Ethernet Connections 2](https://gitlab.cs.wallawalla.edu/delejo/labs/raw/master/lab01/images/Laptop_Connections.jpg)
 5. Computer IP information is shown below. Windows IP `192.168.1.102` and Ubuntu's IP `192.168.1.101`
-
 ![Windows IP](https://gitlab.cs.wallawalla.edu/delejo/labs/raw/master/lab01/images/Windows_IP.jpg)
 ![Ubuntu IP](https://gitlab.cs.wallawalla.edu/delejo/labs/raw/master/lab01/images/Ubuntu_IP.jpg)
-
 6. Use ping to send a ICMP protocol request to the other machine
 
 ![Windows Ping](https://gitlab.cs.wallawalla.edu/delejo/labs/raw/master/lab01/images/Windows_Ping.jpg)
