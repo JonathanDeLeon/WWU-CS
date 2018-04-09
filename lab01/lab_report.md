@@ -23,3 +23,4 @@ The lab was focused on familiarizing ourselves with the equipment while creating
 
 ## Contributors
 @mamatt
+@delejo
