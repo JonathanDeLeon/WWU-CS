@@ -9,11 +9,11 @@ The lab was focused on making and testing RJ-45 ethernet cables.
 
 ## Process
 1. We both created and tested our own 1' working cables.
-  * Stefan's Cable:   
+  * Stefan's Cable using `T568A` standard:   
 ![Stefan's Cable](./images/stefan_cable.jpg)
-  * Jonathan's Cable:    
+  * Jonathan's Cable using `T568B` standard:    
 ![Jonathan's Cable](./images/jonathan_cable.jpg)
-2. As a group, we created one 4' working cable.  
+2. As a group, we created one 4' working cable using `T568B` standard.  
 ![Team Cable](./images/team_cable.jpg)
 
 ### All Cables
