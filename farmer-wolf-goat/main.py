@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Jonathan De Leon
 # CPTR 430 Artificial Intelligence
 # Homework 2
@@ -10,27 +11,43 @@
 # If the goat is left alone with the container of cabbage, the goat will eat the cabbage.
 # Your goal is to transfer everyone to the other side of the river safely.
 
-
 class Entity:
+    '''
+    Entity class that represents Farmer, Wolf, Goat, and Cabbage
+    '''
     WEST, EAST = 0, 1
 
-    def __init__(self, state=None):
-        self.state = state or self.WEST
+    def __init__(self, name, location=None):
+        self.name = name
+        self.location = location or self.WEST
+
+    def new_location(self):
+        return self.EAST if self.is_west() else self.WEST
+
+    def move_copy(self):
+        return Entity(self.name, self.new_location())
 
     def is_east(self):
-        return self.state == self.EAST
+        return self.location == self.EAST
 
     def is_west(self):
-        return self.state == self.WEST
+        return self.location == self.WEST
 
     def __eq__(self, other):
-        return self.state == other.state
+        return self.location == other.location
+
+    def __repr__(self):
+        return "WEST" if self.location == self.WEST else "EAST"
 
     def __str__(self):
-        return "WEST" if self.state == self.WEST else "EAST"
+        return str(self.name) + ": " + self.__repr__()
 
 
 class PuzzleState:
+    '''
+    Class to represent the state of a the 'river crossing' Puzzle
+    '''
+
     def __init__(self, state=None):
         self.state = state
 
@@ -39,34 +56,61 @@ class PuzzleState:
             return True
         return False
 
-    def valid_state(self):
+    def valid_state(self, state=None):
         '''
         :return True if farmer is with goat or if goat is not alone with wolf or cabbage
         '''
-        if self.empty():
-            return False
+        if not state:
+            if self.empty():
+                return False
+            state = self.state
 
         try:
-            if self.state['farmer'] == self.state['goat']:
+            if state['farmer'] == state['goat']:
                 return True
-            elif self.state['goat'] == self.state['wolf']:
+            elif state['goat'] == state['wolf']:
                 return False
-            elif self.state['goat'] == self.state['cabbage']:
+            elif state['goat'] == state['cabbage']:
                 return False
         except:
             return False
         else:
             return True
 
+    def entities_at_pos(self, location):
+        '''
+        :return list of entities at a specified location
+        '''
+        entities = []
+        for entity in self.state.values():
+            if entity.location == location:
+                entities.append(entity)
+        return entities
+
+    def valid_children_generator(self):
+        '''
+        :return python generator with valid branched/children states with new entity locations
+        '''
+        farmer = self.state.get('farmer')
+        for entity in self.entities_at_pos(farmer.location):
+            state = self.state.copy()
+            # Farmer can cross river on his own and with another entity
+            if entity.name != 'farmer':
+                state['farmer'] = farmer.move_copy()
+
+            state[entity.name] = entity.move_copy()
+            if self.valid_state(state):
+                yield PuzzleState(state)
+
     def goal(self):
         '''
-        :return True if all entities in state are east of the river
+        :return True if all entities in the state are east of the river
         '''
         if self.empty():
             return False
         try:
             for entity in self.state.values():
-                if entity.is_west:
+                if entity.is_west():
                     return False
         except:
             return False
@@ -74,23 +118,54 @@ class PuzzleState:
             return True
 
     def __eq__(self, other):
-        return cmp(self.state, other.state)
+        return cmp(self.state, other.state) == 0
+
+    def __repr__(self):
+        return str(self.state)
 
     def __str__(self):
-        return str(self.state)
+        return self.__repr__()
 
 
 class Puzzle:
-    initial = {'farmer': Entity(), 'wolf': Entity(), 'goat': Entity(), 'cabbage': Entity()}
+    initial = {'farmer': Entity('farmer'), 'wolf': Entity('wolf'), 'goat': Entity('goat'), 'cabbage': Entity('cabbage')}
     path = []
+    visited = []
 
     def __init__(self):
         self.path.append(PuzzleState(self.initial))
 
     def find_solution(self):
-        next_state = self.path[-1].copy()
-
+        '''
+        :return find state with a solution using DFS or a stack(LIFO)
+        '''
+        next_state = self.path.pop()
+        while next_state and not next_state.goal():
+            self.visited.append(next_state)
+            for puzzle in next_state.valid_children_generator():
+                if self.unique_state(puzzle):
+                    self.path.append(puzzle)
+            next_state = self.path.pop() if len(self.path) > 0 else None
         return next_state
 
+    def unique_state(self, puzzle):
+        '''
+        :return True if PuzzleState has not already been seen; uses __eq__ in PuzzleState
+        '''
+        if puzzle in self.visited or puzzle in self.path:
+            return False
+        return True
 
-puzzle = PuzzleState()
+
+if __name__ == "__main__":
+    puzzle = Puzzle()
+    print "\n===================================="
+    print "Initial root node"
+    print puzzle.initial
+    print "===================================="
+    print "Solution"
+    print puzzle.find_solution()
+    print "===================================="
+    print "List of visited nodes before finding solution"
+    print puzzle.visited
+    print "====================================\n"
