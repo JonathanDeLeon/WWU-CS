@@ -3,10 +3,10 @@
  * hw02: Implement IsThere() for Array and Linked implementations
  * 
  * File Name:   IsThereArray.cpp
- * Name:        ?
+ * Name:        Jonathan De Leon
  * Course:      CPTR 242
- * Date:        ?
- * Tine Taken:  ?
+ * Date:        April 16, 2018
+ * Time Taken:  30 min
  * 
  */
 #include "ItemType.h"
@@ -17,8 +17,12 @@
 //  Precondition:	List has been initialized.
 // 	Postcondition:	Function value = there exist an item in the list whose key is the same as item's.	
 bool UnsortedArray::IsThere(ItemType item) const {
-    
-    // TODO Implement the Linked version of IsThere().
-    
+    int location = 0;
+    while (location < length) {
+        if (item.ComparedTo(info[location]) == EQUAL) {
+            return true;
+        }
+        location++;
+    }
     return false;
 }
