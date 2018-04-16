@@ -3,6 +3,14 @@ project(CPTR242_Homework)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(CPTR242_Homework
-        hw00/hello-world.cpp
-        hw00/README.md)
+#file(GLOB homework
+#        "hw01/*.h"
+#        "hw01/*.cpp"
+#        )
+#
+#add_executable(CPTR242_Homework
+#        ${homework})
+
+add_subdirectory(hw00)
+add_subdirectory(hw01)
+add_subdirectory(hw02)
