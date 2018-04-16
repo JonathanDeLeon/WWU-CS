@@ -12,11 +12,11 @@ Your goal is to transfer everyone to the other side of the river safely.
 
 ## Getting Started
 
-This assignment was done in python 2.7. It is also implemented using a DFS strategy or stack with
+This assignment was done in python 3.6. It is also implemented using a DFS strategy or stack with
 LIFO operations.
 
 ```python
-python main.py
+python3 main.py
 ```
 
 ## Output
