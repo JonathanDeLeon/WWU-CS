@@ -159,7 +159,7 @@ class Puzzle:
 
 if __name__ == "__main__":
     puzzle = Puzzle()
-    print("\n====================================", )
+    print("\n====================================")
     print("Initial root node")
     print(puzzle.initial)
     print("====================================")
@@ -168,4 +168,4 @@ if __name__ == "__main__":
     print("====================================")
     print("List of visited nodes before finding solution")
     print(puzzle.visited)
-    print("====================================\n")
+    print("====================================", end='\n\n')
