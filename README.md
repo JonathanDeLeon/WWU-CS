@@ -40,6 +40,6 @@ If you are using a terminal, type the following command.
 git remote add upstream git@gitlab.cs.wallawalla.edu:cptr242/homework.git
 ```
 
-
 ## Git Cheatsheet
 A basic [cheat sheet](https://www.git-tower.com/blog/git-cheat-sheet/) for command on [git](https://git-scm.com/).
+
