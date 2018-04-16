@@ -118,7 +118,7 @@ class PuzzleState:
             return True
 
     def __eq__(self, other):
-        return cmp(self.state, other.state) == 0
+        return self.state == other.state
 
     def __repr__(self):
         return str(self.state)
@@ -159,13 +159,13 @@ class Puzzle:
 
 if __name__ == "__main__":
     puzzle = Puzzle()
-    print "\n===================================="
-    print "Initial root node"
-    print puzzle.initial
-    print "===================================="
-    print "Solution"
-    print puzzle.find_solution()
-    print "===================================="
-    print "List of visited nodes before finding solution"
-    print puzzle.visited
-    print "====================================\n"
+    print("\n====================================", )
+    print("Initial root node")
+    print(puzzle.initial)
+    print("====================================")
+    print("Solution")
+    print(puzzle.find_solution())
+    print("====================================")
+    print("List of visited nodes before finding solution")
+    print(puzzle.visited)
+    print("====================================\n")
