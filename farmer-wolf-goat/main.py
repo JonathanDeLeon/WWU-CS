@@ -80,19 +80,17 @@ class PuzzleState:
         return str(self.state)
 
 
-def Puzzle:
+class Puzzle:
     initial = {'farmer': Entity(), 'wolf': Entity(), 'goat': Entity(), 'cabbage': Entity()}
     path = []
 
     def __init__(self):
-        self.path.append(PuzzleState(initial))
+        self.path.append(PuzzleState(self.initial))
 
     def find_solution(self):
         next_state = self.path[-1].copy()
-        while next_state and not next_state.goal():
 
-
-
+        return next_state
 
 
 puzzle = PuzzleState()
