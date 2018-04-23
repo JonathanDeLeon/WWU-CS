@@ -112,6 +112,7 @@ class PuzzleSolver:
 
 
 if __name__ == "__main__":
+    # Use initial state found in book 
     puzzle = PuzzleState([3, 1, 2, None])
     solution = PuzzleSolver(puzzle).solve()
     if solution is not None:
