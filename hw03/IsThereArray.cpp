@@ -19,6 +19,22 @@
 bool SortedArray::IsThere(ItemType item) const {
     
         // TODO Implement the Array version of IsThere() using binary search.
+    int mid;
+    int lo = 0;
+    int hi = length - 1;
+    while (lo <= hi) {
+        mid = ((unsigned int)lo + (unsigned int)hi) >> 1;
+        switch (item.ComparedTo(info[mid])) {
+            case LESS:
+                hi = mid - 1;
+                break;
+            case GREATER:
+                lo = mid + 1;
+                break;
+            case EQUAL:
+                return true;
+        }
+    }
     
     return false;
 }
