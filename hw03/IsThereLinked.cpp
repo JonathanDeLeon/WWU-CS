@@ -20,7 +20,7 @@ bool SortedLinked::IsThere(ItemType item) const {
     
     // TODO Implement the Linked version of IsThere() using an early exit if not found.
     NodeType* location = listData;
-    while (location != null) {
+    while (location != NULL) {
         switch (item.ComparedTo(location->info)) {
             case LESS:
                 return false;
