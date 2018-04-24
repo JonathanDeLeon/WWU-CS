@@ -120,19 +120,16 @@ class PuzzleSolver:
         Cost is the number of steps needed to get to the state
         '''
         queue = collections.deque([self.initial])
-        visited = set()
 
         while queue:
             node = queue.pop()
-            visited.add(node)
             if node.goal:
                 return node
 
             for puzzle in node.expand_children(cost_method=lambda state: depth(len(node.prev_states))):
-                if puzzle not in visited and puzzle not in queue:
-                    queue.appendleft(puzzle)
+                queue.appendleft(puzzle)
             # Sort queue by cost
-            sorted(queue, key=lambda state: state.cost, reverse=True)
+            queue = collections.deque(sorted(queue, key=lambda state: state.cost, reverse=True))
 
     def solve_simple_heuristic(self):
         '''
@@ -140,20 +137,17 @@ class PuzzleSolver:
         Cost is the number of steps needed to get to the state plus number of tiles out of place
         '''
         queue = collections.deque([self.initial])
-        visited = set()
 
         while queue:
             node = queue.pop()
-            visited.add(node)
             if node.goal:
                 return node
 
             for puzzle in node.expand_children(
                     cost_method=lambda state: depth(len(node.prev_states)) + simple_heuristic(state)):
-                if puzzle not in visited and puzzle not in queue:
-                    queue.appendleft(puzzle)
+                queue.appendleft(puzzle)
             # Sort queue by cost
-            sorted(queue, key=lambda state: state.cost, reverse=True)
+            queue = collections.deque(sorted(queue, key=lambda state: state.cost, reverse=True))
 
     def solve_complex_heuristic(self):
         '''
@@ -161,26 +155,24 @@ class PuzzleSolver:
         Cost is the number of steps needed to get to the state plus sum of moves needed for each tile
         '''
         queue = collections.deque([self.initial])
-        visited = set()
 
         while queue:
             node = queue.pop()
-            visited.add(node)
             if node.goal:
                 return node
 
             for puzzle in node.expand_children(
                     cost_method=lambda state: depth(len(node.prev_states)) + complex_heuristic(state)):
-                if puzzle not in visited and puzzle not in queue:
-                    queue.appendleft(puzzle)
+                queue.appendleft(puzzle)
             # Sort queue by cost
-            sorted(queue, key=lambda state: state.cost, reverse=True)
+            queue = collections.deque(sorted(queue, key=lambda state: state.cost, reverse=True))
 
     def solve_dynamic_programming(self):
         '''
         Use A* Search or Branch and Bound with Dynamic Programming and return solution PuzzleState
         Cost is the number of steps needed to get to the state and sum of moves needed for each tile
         '''
+        self.initial.cost = 0
         queue = collections.deque([self.initial])
         visited = set()
 
@@ -192,10 +184,18 @@ class PuzzleSolver:
 
             for puzzle in node.expand_children(
                     cost_method=lambda state: depth(len(node.prev_states)) + complex_heuristic(state)):
-                if puzzle not in visited and puzzle not in queue:
+                if puzzle in visited:
+                    for element in iter(visited):
+                        if element == puzzle:
+                            visited_puzzle = element
+                            break
+                    if puzzle.cost < visited_puzzle.cost:
+                        visited.remove(visited_puzzle)
+                        queue.appendleft(puzzle)
+                else:
                     queue.appendleft(puzzle)
             # Sort queue by cost
-            sorted(queue, key=lambda state: state.cost, reverse=True)
+            queue = collections.deque(sorted(queue, key=lambda state: state.cost, reverse=True))
 
 
 def depth(distance):
