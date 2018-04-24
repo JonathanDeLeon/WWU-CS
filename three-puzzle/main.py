@@ -67,7 +67,7 @@ class PuzzleState:
         to_string = "\n".join(str(self.state[start: start + self.width])
                               for start in range(0, len(self.state), self.width))
         if self.cost is not None:
-            to_string += "\nCost||Heuristic: " + str(self.cost)
+            to_string += "\nCost|Heuristic: " + str(self.cost)
         return to_string
 
     def __eq__(self, other):
@@ -250,27 +250,39 @@ def pretty_print_children(puzzle):
 if __name__ == "__main__":
     # Use initial state found in book 
     puzzle = PuzzleState([3, 1, 2, None])
+
     print("\n====================================")
     print("Initial Puzzle State")
     print(puzzle)
+
     print("====================================")
+    raw = input("Press Enter to continue to BFS Solution...")
     print("BFS Solution")
     solution = PuzzleSolver(puzzle).solve_BFS()
     pretty_print_children(solution)
+
     print("====================================")
+    raw = input("Press Enter to continue to Uniform Cost Solution...")
     print("Branch and Bound with Cost")
     solution = PuzzleSolver(puzzle).solve_uniform_cost_search()
     pretty_print_children(solution)
+
     print("====================================")
+    raw = input("Press Enter to continue to Branch and Bound with simple heuristics...")
     print("Branch and Bound with Simple Heuristic")
     solution = PuzzleSolver(puzzle).solve_simple_heuristic()
     pretty_print_children(solution)
+
     print("====================================")
+    raw = input("Press Enter to continue to Branch and Bound with complex heuristics...")
     print("Branch and Bound with Complex Heuristic")
     solution = PuzzleSolver(puzzle).solve_complex_heuristic()
     pretty_print_children(solution)
+
     print("====================================")
+    raw = input("Press Enter to continue to Branch and Bound with dynamic programming...")
     print("Branch and Bound with Dynamic Programming")
     solution = PuzzleSolver(puzzle).solve_dynamic_programming()
     pretty_print_children(solution)
+
     print("====================================", end='\n\n')
