@@ -184,12 +184,26 @@ class PuzzleSolver:
 
             for puzzle in node.expand_children(
                     cost_method=lambda state: depth(len(node.prev_states)) + complex_heuristic(state)):
-                if puzzle in visited:
+                if puzzle in queue:
+                    # Puzzle in open priority queue
+                    for i, element in enumerate(queue):
+                        if element == puzzle:
+                            visited_puzzle = element
+                            break
+
+                    if puzzle.cost < visited_puzzle.cost:
+                        # Update costs and parent tree
+                        visited_puzzle.cost = puzzle.cost
+                        visited_puzzle.prev_states = puzzle.prev_states
+
+                elif puzzle in visited:
+                    # Puzzle in closed list
                     for element in iter(visited):
                         if element == puzzle:
                             visited_puzzle = element
                             break
                     if puzzle.cost < visited_puzzle.cost:
+                        # Remove puzzle in closed list and add puzzle to queue
                         visited.remove(visited_puzzle)
                         queue.appendleft(puzzle)
                 else:
