@@ -18,6 +18,9 @@
 * Class C Network
   * At least two subnets
 
+## Design Layout
+![Networking Design](img/6305ffaefdf210e5713e6576f7ccab11.jpg.png)
+
 ## Contributors
 * @delejo
 * @mamatt
