@@ -2,7 +2,6 @@
 
 This lab was done by Jonathan De leon and Matthew Ma as part of the *CPTR 210 Data Communications and Networks* lab assignment.
 
-
 ## Background
 
 A local doctor has come to you for advice on how to set up his office network.
@@ -19,13 +18,13 @@ There will be about 10 computers on LAN network connecting to the wall outlets. 
   * [$12.99 Cat5e Keystone Jack](http://a.co/0o8JcXL)
   * [$9.99 Wall Plate](http://a.co/d0aJYTN)
 * Cabling
-  * [$159.99 Cat5e Plenum Cabling](http://a.co/8aBYFJ2)
+  * [$159.99 Cat5e Plenum Cabling](http://a.co/8aBYFJ2)  
   ![Cabling](img/Cabling.png)
 * Router
-  * [$99.99 NETGEAR R6700 Nighthawk](http://a.co/abbiKHe)
+  * [$99.99 NETGEAR R6700 Nighthawk](http://a.co/abbiKHe)  
   ![Router](img/Router.png)
 * Switches
-  * [$116.94 Cisco 10-port Gigabit Managed Switch](http://a.co/2clLWWc)
+  * [$116.94 Cisco 10-port Gigabit Managed Switch](http://a.co/2clLWWc)  
   ![Network Switch](img/Network_Switch.png)
 
 ### Tools Needed
