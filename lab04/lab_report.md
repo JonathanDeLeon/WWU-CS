@@ -2,7 +2,6 @@
 
 This lab was done by Jonathan De leon and Matthew Ma as part of the *CPTR 210 Data Communications and Networks* lab assignment.
 
-
 ## Background
 
 A local doctor has come to you for advice on how to set up his office network.
