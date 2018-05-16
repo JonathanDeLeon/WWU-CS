@@ -24,6 +24,7 @@ Relevent ISOs images are available under __/wwu/isos/__ in the lab.
 
 * Use the "bridge adapter" setting for the Windows Server VM.
 * You may use any computer to connect to the server where you have admin access.
+* Disable the windows firewall to enable the ping comma
 
 
 ## Lab Write Up
