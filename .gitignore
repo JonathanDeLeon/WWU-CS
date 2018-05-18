@@ -39,3 +39,5 @@ Thumbs.db
 # Custom ignores #
 ######################
 # ./chickadee/*
+.idea/
+cmake-build-debug/
