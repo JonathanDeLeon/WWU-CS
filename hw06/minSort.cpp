@@ -12,13 +12,25 @@
 #include "ItemType.h"
 #include "unsorted.h"
 
-using namespace std;
-
 NodeType* MinLoc(NodeType* list, NodeType*& minPtr) {
     // TODO Add recursive MinLoc.
-    return NULL;
+    if (list == NULL) {
+        return minPtr;
+    } else if (list->info.ComparedTo(minPtr->info) == LESS) {
+        minPtr = list;
+    }
+    return MinLoc(list->next, minPtr);
 }
 
 void Sort(NodeType* list) {
     // TODO Add recursive sort method that uses MinLoc.
+    if (list != NULL) {
+        NodeType* temp = new NodeType;
+        NodeType* min = list;
+        MinLoc(list, min);
+        temp->info = list->info;
+        list->info = min->info;
+        min->info = temp->info;
+        Sort(list->next);
+    }
 }
