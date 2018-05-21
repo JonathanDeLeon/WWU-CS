@@ -3,10 +3,10 @@
  * Howemork.06: Implement a two recursive functions on a linked unsorted list.
  *
  * File Name:  minSort.cpp
- * Name:       ?
+ * Name:       Jonathan De Leon
  * Course:     CPTR 242
- * Date:       ?
- * Time Taken: ?
+ * Date:       5/21/18
+ * Time Taken: 1 hr
  *
  */
 #include "ItemType.h"
