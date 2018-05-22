@@ -37,5 +37,9 @@ I added the `netserver.troubleticket.local` nameserver zone configurations.
 
 ![Reverse Lookup](img/reverse_lookup.JPG)
 
+## Testing DNS server
+
+Ideally, the DNS server should be responding to queries. I wasn't able to ping, dig, or nslookup the dns server. I believe that it's due to the IP address configurations in the DNS configs. The lab mentioned to add a configuration to allow some DNS configuration, but I couldn't find how to do it on Ubuntu. Nonetheless, the lab was updated to only do the first portion which was completed.
+
 ## Contributors
 * @delejo
