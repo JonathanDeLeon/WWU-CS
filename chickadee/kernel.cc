@@ -145,7 +145,74 @@ void proc::exception(regstate* regs) {
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
 uintptr_t proc::fork(regstate *regs) {
-    return -1;
+    // Lock ptable
+    auto irqs = ptable_lock.lock();
+
+    // Allocate new PID
+    // Note: pid = 0, should be reserved for the scheduler responsible for paging
+    // pid = 1 is the init process
+    pid_t newPID = -1;
+    for (pid_t i = 1; newPID == -1 && i < NPROC; ++i) {
+        if (ptable[i] == nullptr) {
+            newPID = i;
+        }
+    }
+
+    // If system is not out of PIDs
+    if (newPID <= 0) {
+        ptable_lock.unlock(irqs);
+        return -1;
+    }
+
+    // Allocate proc and ptable
+    proc * p = ptable[newPID] = kalloc_proc();
+    x86_64_pagetable *npt = kalloc_pagetable();
+    assert(p && npt);
+    p->init_user(newPID, npt);
+    // Copy the parent process’s user-accessible memory and map the copies into the new process’s page table
+    for (vmiter iter(this); iter.low(); iter.next()) {
+        if (iter.user()) {
+            uintptr_t virtualAddress = iter.va();
+            assert(virtualAddress);
+            uintptr_t parentPhyiscalAddressU = iter.pa();
+            assert(parentPhyiscalAddressU);
+            uintptr_t parentPhysicalAddressK = pa2ka(parentPhyiscalAddressU);
+
+            // Allocate memory to child process
+            x86_64_page *childPhysicalAddressK = kallocpage();
+            assert(childPhysicalAddressK);
+            int r = vmiter(p, virtualAddress).map(ka2pa(childPhysicalAddressK));
+            assert(r >= 0);
+
+            memcpy(
+                    (void *) childPhysicalAddressK,
+                    (const void *) parentPhysicalAddressK,
+                    (size_t) PAGESIZE
+            );
+        }
+    }
+    // Initialize the new process’s registers to a copy of the old process’s registers.
+    memcpy(
+            (void *) p->regs_,
+            (const void *) regs,
+            sizeof(regstate)
+    );
+    // Store the new process in the process table
+    // This process should already be in the process table
+
+    // Arrange for the new PID to be returned to the parent process and 0 to be returned to the child process.
+    if (this->pid_ == newPID) {
+        return 0;
+    }
+
+    // Enqueue new process on the run queue
+    int cpu = newPID % ncpu;
+    cpus[cpu].runq_lock_.lock_noirq();
+    cpus[cpu].enqueue(p);
+    cpus[cpu].runq_lock_.unlock_noirq();
+
+    ptable_lock.unlock(irqs);
+    return newPID;
 }
 #pragma GCC pop_options
 
