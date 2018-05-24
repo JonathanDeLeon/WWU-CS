@@ -267,8 +267,6 @@ uintptr_t proc::syscall(regstate* regs) {
     }
 
     case SYSCALL_FORK:
-        // Your code here
-//        return -1;
         return this->fork(regs);
 
     case SYSCALL_READ: {
