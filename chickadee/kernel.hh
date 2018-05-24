@@ -67,8 +67,6 @@ struct __attribute__((aligned(4096))) proc {
     inline irqstate lock_pagetable_read();
     inline void unlock_pagetable_read(irqstate& irqs);
 
-    uintptr_t fork(regstate* regs);
-
  private:
     static int load_segment(const elf_program& ph, loader& ld);
 };
