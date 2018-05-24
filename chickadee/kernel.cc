@@ -183,9 +183,9 @@ uintptr_t proc::fork(regstate *regs) {
             // Map copies into new process's page table
             x86_64_page *childPhysicalAddressK = kallocpage();
             assert(childPhysicalAddressK);
+            // This maps physical page at virtual address to new process' page table
             // ka2pa converts high canonical address to physical address
-            // This maps physical page at virtual address
-            int r = vmiter(p, virtualAddress).map(ka2pa(childPhysicalAddressK));
+            int r = vmiter(p->pagetable_, virtualAddress).map(ka2pa(childPhysicalAddressK));
             assert(r >= 0);
 
             memcpy(
