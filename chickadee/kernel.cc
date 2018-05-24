@@ -158,29 +158,33 @@ uintptr_t proc::fork(regstate *regs) {
         }
     }
 
-    // If system is not out of PIDs
+    // If system is out of PIDs
     if (newPID <= 0) {
         ptable_lock.unlock(irqs);
         return -1;
     }
 
     // Allocate proc and ptable
-    proc * p = ptable[newPID] = kalloc_proc();
+    proc *p = ptable[newPID] = kalloc_proc();
     x86_64_pagetable *npt = kalloc_pagetable();
     assert(p && npt);
     p->init_user(newPID, npt);
     // Copy the parent process’s user-accessible memory and map the copies into the new process’s page table
     for (vmiter iter(this); iter.low(); iter.next()) {
         if (iter.user()) {
+            // Get parent's memory addresses
             uintptr_t virtualAddress = iter.va();
             assert(virtualAddress);
-            uintptr_t parentPhyiscalAddressU = iter.pa();
-            assert(parentPhyiscalAddressU);
-            uintptr_t parentPhysicalAddressK = pa2ka(parentPhyiscalAddressU);
+            uintptr_t parentPhysicalAddressP = iter.pa();
+            assert(parentPhysicalAddressP);
+            // pa2ka converts physical address to high canonical address
+            uintptr_t parentPhysicalAddressK = pa2ka(parentPhysicalAddressP);
 
-            // Allocate memory to child process
+            // Map copies into new process's page table
             x86_64_page *childPhysicalAddressK = kallocpage();
             assert(childPhysicalAddressK);
+            // ka2pa converts high canonical address to physical address
+            // This maps physical page at virtual address
             int r = vmiter(p, virtualAddress).map(ka2pa(childPhysicalAddressK));
             assert(r >= 0);
 
@@ -197,10 +201,11 @@ uintptr_t proc::fork(regstate *regs) {
             (const void *) regs,
             sizeof(regstate)
     );
+
     // Store the new process in the process table
     // This process should already be in the process table
 
-    // Arrange for the new PID to be returned to the parent process and 0 to be returned to the child process.
+    // Arrange for 0 to be returned to the child process.
     if (this->pid_ == newPID) {
         return 0;
     }
