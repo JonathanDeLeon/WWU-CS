@@ -142,6 +142,13 @@ void proc::exception(regstate* regs) {
     assert((regs->reg_cs & 3) == 0 || this->state_ == proc::runnable);
 }
 
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+uintptr_t proc::fork(regstate *regs) {
+    return -1;
+}
+#pragma GCC pop_options
+
 
 // proc::syscall(regs)
 //    System call handler.
@@ -194,7 +201,8 @@ uintptr_t proc::syscall(regstate* regs) {
 
     case SYSCALL_FORK:
         // Your code here
-        return -1;
+//        return -1;
+        return this->fork(regs);
 
     case SYSCALL_READ: {
         int fd = regs->reg_rdi;
