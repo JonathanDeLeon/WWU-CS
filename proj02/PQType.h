@@ -64,7 +64,7 @@ void PQType<ItemType>::Dequeue(ItemType& item)
         item = items.elements[0];
         items.elements[0] = items.elements[length - 1];
         length--;
-//        items.ReheapDown(0, length - 1);
+        items.ReheapDown(0, length - 1);
     }
 }
 
@@ -77,7 +77,7 @@ void PQType<ItemType>::Enqueue(ItemType newItem)
     else {
         length++;
         items.elements[length - 1] = newItem;
-//        items.ReheapUp(0, length - 1);
+        items.ReheapUp(0, length - 1);
     }
 }
 template <class ItemType>
