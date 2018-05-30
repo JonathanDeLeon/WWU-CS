@@ -2,32 +2,38 @@
 // Created by Jonathan De Leon on 5/23/18.
 //
 
-#ifndef CPTR242_HOMEWORK_APPLICANT_H
-#define CPTR242_HOMEWORK_APPLICANT_H
-
-
-#include <ostream>
-
-enum RelationType { LESS, GREATER, EQUAL };
+#include <iostream>
 
 class Applicant {
 public:
     Applicant();
 
-    RelationType ComparedTo(Applicant) const;
+    void Initialize(long id, std::string name, int age1, bool isMarried, int children);
 
-    void Print(std::ostream &) const;
+    int GetAge() const;
 
-    void Initialize(int number);
+    void SetAge(int age1);
+
+    bool HasChildren() const;
+
+    int GetChildren() const;
+
+    void SetChildren(int children);
+
+    bool IsMarried() const;
+
+    void SetMarried(bool isMarried);
+
+    bool operator==(Applicant other) const;
+
+    friend bool operator!=(const Applicant &app1, const Applicant &app2);
+
+    friend std::ostream &operator<<(std::ostream &output, const Applicant &applicant);
 
 private:
-    int value;
+    long studentId;
+    std::string fullName;
+    int age;
+    int numChildren;
+    bool married;
 };
-
-Applicant::Applicant() {
-    value = 0;
-}
-
-
-
-#endif //CPTR242_HOMEWORK_APPLICANT_H
