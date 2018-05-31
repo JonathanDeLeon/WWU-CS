@@ -8,6 +8,15 @@
 #include "Application.h"
 
 /*
+ * Helper function to reset applicant priority data to default values
+ */
+void ResetApplicantPriorities(Applicant &applicant) {
+    applicant.SetMarried(false);
+    applicant.SetChildren(0);
+    applicant.SetAge(21);
+}
+
+/*
  * Return true if queue has its priorities maintained in the data structure
  */
 bool TestPriorityMaintained(PQType<Application> queue) {
@@ -41,7 +50,7 @@ bool TestPriorityMaintained(PQType<Application> queue) {
  * Test inserting application to an empty queue
  */
 void TestEnqueueOnEmpty() {
-    PQType<Application> queue(2);
+    PQType<Application> queue(1);
     Application application;
     Applicant applicant;
 
@@ -49,55 +58,59 @@ void TestEnqueueOnEmpty() {
     assert(queue.IsEmpty());
 
     // Insert one application into queue
-    application.Initialize(applicant);
+    application.Initialize(1, applicant);
     queue.Enqueue(application);
     assert(!queue.IsEmpty());
+    std::cout << "TestEnqueueOnEmpty successfully ran." << std::endl;
 }
 
 /*
  * Test general insertion to a priority queue
  */
 void TestEnqueueGeneral() {
-    PQType<Application> queue(4);
+    PQType<Application> queue(5);
     Application application;
     Applicant applicant;
 
     // Add applicants to the queue
-    applicant.Initialize(1, "Test 1", 18, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(1, "Test 1", "", 18);
+    application.Initialize(1, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(1, "Test 2 Priority", 25, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(1, "Test 2 Priority", "", 25);
+    application.Initialize(2, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(1, "Test 3", 17, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(1, "Test 3", "", 17);
+    application.Initialize(3, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(1, "Test 4 Priority", 17, true, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(1, "Test 4 Priority", "", 17);
+    applicant.SetMarried(true);
+    application.Initialize(4, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(1, "Test 5 Priority", 18, false, 3);
-    application.Initialize(applicant);
+    applicant.Initialize(1, "Test 5 Priority", "", 18);
+    applicant.SetChildren(3);
+    application.Initialize(5, applicant);
     queue.Enqueue(application);
 
     // Check if priority is maintained in the data structure
     assert(TestPriorityMaintained(queue));
+    std::cout << "TestEnqueueGeneral successfully ran." << std::endl;
 }
 
 /*
  * Test special case when removing last application
  */
 void TestDequeueOneApplicant() {
-    PQType<Application> queue(2);
+    PQType<Application> queue(1);
     Application application;
     Application applicantOutput;
     Applicant applicant;
 
     // Add application to the queue
-    application.Initialize(applicant);
+    application.Initialize(1, applicant);
     queue.Enqueue(application);
 
     // Dequeue application
@@ -108,6 +121,7 @@ void TestDequeueOneApplicant() {
 
     // First application out should be the one inserted in an empty queue
     assert(application == applicantOutput);
+    std::cout << "TestDequeueOneApplicant successfully ran." << std::endl;
 }
 
 /*
@@ -122,24 +136,24 @@ void TestDequeueGeneral() {
 
     // Add applicants to the queue
     // Note: jeff and david applicants 'variables'
-    applicant.Initialize(2, "jeff", 18, false, 0);
-    jeff.Initialize(applicant);
+    applicant.Initialize(2, "jeff", "", 18);
+    jeff.Initialize(1, applicant);
     queue.Enqueue(jeff);
 
-    applicant.Initialize(2, "test 1", 17, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(2, "test 2", "", 17);
+    application.Initialize(2, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(2, "test 2", 14, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(2, "test 3", "", 14);
+    application.Initialize(3, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(2, "david", 25, false, 0);
-    david.Initialize(applicant);
+    applicant.Initialize(2, "david", "", 25);
+    david.Initialize(4, applicant);
     queue.Enqueue(david);
 
-    applicant.Initialize(2, "test 3", 15, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(2, "test 5", "", 15);
+    application.Initialize(5, applicant);
     queue.Enqueue(application);
 
     // Dequeue two applicants: should be david & jeff
@@ -150,6 +164,7 @@ void TestDequeueGeneral() {
 
     // Check if priority is maintained in the data structure
     assert(TestPriorityMaintained(queue));
+    std::cout << "TestDequeueGeneral successfully ran." << std::endl;
 }
 
 /*
@@ -161,30 +176,33 @@ void TestGeneralInsertAndDelete() {
     Applicant applicant;
 
     // Add/Remove applicants to/from the queue
-    applicant.Initialize(3, "test 1", 15, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(3, "test 1", "", 15);
+    application.Initialize(1, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(3, "test 2 priority", 15, false, 1);
-    application.Initialize(applicant);
+    applicant.Initialize(3, "test 2 priority", "", 15);
+    applicant.SetChildren(1);
+    application.Initialize(2, applicant);
     queue.Enqueue(application);
 
     queue.Dequeue(application);
 
     assert(TestPriorityMaintained(queue));
 
-    applicant.Initialize(3, "test 3 priority", 15, false, 1);
-    application.Initialize(applicant);
+    applicant.Initialize(3, "test 3 priority", "", 15);
+    applicant.SetChildren(1);
+    application.Initialize(3, applicant);
     queue.Enqueue(application);
 
     assert(TestPriorityMaintained(queue));
 
-    applicant.Initialize(3, "test 4 priority", 26, true, 1);
-    application.Initialize(applicant);
+    applicant.Initialize(3, "test 4 priority", "", 26);
+    applicant.SetMarried(true);
+    application.Initialize(4, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(3, "test 5", 24, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(3, "test 5", "", 24);
+    application.Initialize(5, applicant);
     queue.Enqueue(application);
 
     queue.Dequeue(application);
@@ -192,6 +210,7 @@ void TestGeneralInsertAndDelete() {
     queue.Dequeue(application);
 
     assert(TestPriorityMaintained(queue));
+    std::cout << "TestGeneralInsertAndDelete successfully ran." << std::endl;
 }
 /*
  * Test queue's MakeEmpty and check that Dequeue of empty queue throws EmptyPQ exception
@@ -202,16 +221,18 @@ void TestMakeEmpty() {
     Applicant applicant;
 
     // Add applicants to the queue
-    applicant.Initialize(4, "test 1 priority", 26, true, 1);
-    application.Initialize(applicant);
+    applicant.Initialize(4, "test 1 priority", "", 26);
+    applicant.SetMarried(true);
+    applicant.SetChildren(1);
+    application.Initialize(1, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(4, "test 2", 18, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(4, "test 2", "", 18);
+    application.Initialize(2, applicant);
     queue.Enqueue(application);
 
-    applicant.Initialize(4, "test 3", 19, false, 0);
-    application.Initialize(applicant);
+    applicant.Initialize(4, "test 3", "", 19);
+    application.Initialize(3, applicant);
     queue.Enqueue(application);
 
     // Test empty Queue
@@ -225,5 +246,16 @@ void TestMakeEmpty() {
         assert(false);
     } catch (EmptyPQ ex) {
         assert(true);
+        std::cout << "TestMakeEmpty successfully ran." << std::endl;
     }
+}
+int main() {
+    TestEnqueueOnEmpty();
+    TestEnqueueGeneral();
+    TestDequeueOneApplicant();
+    TestDequeueGeneral();
+    TestGeneralInsertAndDelete();
+    TestMakeEmpty();
+    std::cout << "\nAll tests successfully ran." << std::endl;
+    return 0;
 }
