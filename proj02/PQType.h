@@ -7,6 +7,7 @@ class PQType {
   public:
     PQType(int);  // parameterized class constructor
     ~PQType();    // class destructor
+    PQType(const PQType<ItemType>& anotherQueue);   // copy constructor
 
     void MakeEmpty();
     // Function: Initializes the queue to an empty state.
@@ -42,6 +43,14 @@ PQType<ItemType>::PQType(int max) {
     maxItems = max;
     items.elements = new ItemType[max];
     length = 0;
+}
+
+template <class ItemType>
+PQType<ItemType>::PQType(const PQType<ItemType> &anotherQueue) {
+    maxItems = anotherQueue.maxItems;
+    items.elements = new ItemType[maxItems];
+    length = anotherQueue.length;
+    memcpy(items.elements, anotherQueue.items.elements, sizeof(int) * maxItems);
 }
 
 template <class ItemType>
