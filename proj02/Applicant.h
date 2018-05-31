@@ -8,7 +8,7 @@ class Applicant {
 public:
     Applicant();
 
-    void Initialize(long id, std::string name, int age1, bool isMarried, int children);
+    void Initialize(long id, std::string name, std::string emailAddress, int age1);
 
     int GetAge() const;
 
@@ -33,6 +33,7 @@ public:
 private:
     long studentId;
     std::string fullName;
+    std::string email;
     int age;
     int numChildren;
     bool married;

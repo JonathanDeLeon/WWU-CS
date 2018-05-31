@@ -7,17 +7,19 @@
 Applicant::Applicant() {
     studentId = -1;
     fullName = "";
-    age = -1;
+    email = "";
+    age = 21;
     numChildren = 0;
     married = false;
 }
 
-void Applicant::Initialize(long id, std::string name, int age1, bool isMarried, int children) {
+void Applicant::Initialize(long id, std::string name, std::string emailAddress, int age1) {
     studentId = id;
     fullName = name;
+    email = emailAddress;
     age = age1;
-    married = isMarried;
-    numChildren = children;
+    married = false;
+    numChildren = 0;
 }
 
 int Applicant::GetAge() const {
@@ -73,6 +75,4 @@ std::ostream &operator<<(std::ostream &output, const Applicant &applicant) {
     return output;
 }
 
-int main() {
-    return 0;
-}
+
