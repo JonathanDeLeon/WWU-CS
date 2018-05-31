@@ -9,7 +9,7 @@
 
 using namespace std;
 
-PQType<Application> apps(99);
+PQType<Application> apps(20);
 long nextApplicationId = 0;
 
 /*
