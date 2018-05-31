@@ -51,6 +51,6 @@ bool Application::operator==(const Application &other) const {
 }
 
 std::ostream &operator<<(std::ostream &output, const Application &application) {
-    output << "Application " << application.applicationId << " : " << application.applicant;
+    output << "Application " << application.applicationId << ": " << application.applicant;
     return output;
 }

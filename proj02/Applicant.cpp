@@ -70,8 +70,14 @@ bool operator!=(const Applicant &app1, const Applicant &app2) {
 }
 
 std::ostream &operator<<(std::ostream &output, const Applicant &applicant) {
-    output << applicant.studentId << " : " << applicant.fullName << "; " << applicant.age << " years old; Married? "
-           << applicant.IsMarried() << "; Children? " << applicant.HasChildren();
+    output << "Student ID " << applicant.studentId << "; " << applicant.fullName << "; Email " << applicant.email << "; "
+           << applicant.age << " years old;";
+    output << " Married? " << (applicant.IsMarried() ? "Yes;" : "No;");
+    output << " Children? " << (applicant.HasChildren() ? "Yes;" : "No;");
+    if (applicant.HasChildren()) {
+        output << " " << applicant.numChildren << " children";
+    }
+
     return output;
 }
 
