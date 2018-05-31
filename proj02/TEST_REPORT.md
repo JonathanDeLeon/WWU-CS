@@ -56,5 +56,5 @@ The tests should be run by a test_driver.cpp.
 ### Compile Tests
 
 ```bash
-g++ -std=c++11 test_driver.cpp PQType.h Heap.h Applicant.cpp && ./a.out
+g++ -std=c++11 test_driver.cpp PQType.h Heap.h Application.cpp Applicant.cpp && ./a.out
 ```
