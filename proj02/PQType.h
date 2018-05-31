@@ -50,7 +50,11 @@ PQType<ItemType>::PQType(const PQType<ItemType> &anotherQueue) {
     maxItems = anotherQueue.maxItems;
     items.elements = new ItemType[maxItems];
     length = anotherQueue.length;
-    memcpy(items.elements, anotherQueue.items.elements, sizeof(int) * maxItems);
+    for (int i = 0; i < length; i++) {
+        items.elements[i] = anotherQueue.items.elements[i];
+    }
+    // memcpy doesn't objects correctly
+//    memcpy(items.elements, anotherQueue.items.elements, sizeof(int) * maxItems);
 }
 
 template <class ItemType>
