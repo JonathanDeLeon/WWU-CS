@@ -17,37 +17,32 @@ void DoesApplicantHavePriority(const Applicant &applicant, bool &priority) {
 }
 
 Application::Application() {
+    applicationId = 999;
     priority = false;
 }
 
-void Application::Initialize(const Applicant &applicant1) {
+void Application::Initialize(long id, const Applicant &applicant1) {
+    applicationId = id;
     applicant = applicant1;
     DoesApplicantHavePriority(applicant, priority);
-    timestamp = std::time(nullptr);
 }
 
 bool Application::operator<(const Application &other) const {
-    if (priority == false && other.priority == true) {
-        return true;
-    } else if (timestamp > other.timestamp) {
-        // Larger timestamp, lower priority
-        return true;
-    }
-    return false;
-}
-bool Application::operator>(const Application &other) const {
     if (priority == true && other.priority == false) {
+        return false;
+    } else if (priority == false && other.priority == true) {
         return true;
-    } else if (timestamp < other.timestamp) {
-        // Smaller timestamp, higher priority
+    } else if (applicationId > other.applicationId) {
+        // Smaller ID = application was submitted earlier
         return true;
     }
     return false;
 }
+
 bool Application::operator==(const Application &other) const {
     if (priority != other.priority) {
         return false;
-    } else if (timestamp != other.timestamp) {
+    } else if (applicationId != other.applicationId) {
         return false;
     } else if (applicant != other.applicant) {
         return false;
@@ -56,6 +51,6 @@ bool Application::operator==(const Application &other) const {
 }
 
 std::ostream &operator<<(std::ostream &output, const Application &application) {
-    output << application.applicant << " Created on " << application.timestamp;
+    output << "Application " << application.applicationId << " : " << application.applicant;
     return output;
 }
