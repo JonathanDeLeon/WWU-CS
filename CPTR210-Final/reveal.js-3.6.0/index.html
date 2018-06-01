@@ -7,7 +7,7 @@
 		<title>VPN Presentation</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/league.css">
+		<link rel="stylesheet" href="css/theme/black.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -20,11 +20,71 @@
 			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
+		<style>
+		.fragment-replace {
+			position: relative;
+		}
+		.fragment-replace > * {
+			position: absolute;
+			left: 0;
+			right: 0;
+			margin-left: auto !important;
+			margin-right: auto !important;
+			width: 95%;
+			max-height: none !important;
+		}
+		</style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section data-markdown>
+				<section data-markdown id="slide-1">
+					<script type="text/template">
+						## Virtual Private Network
+
+						<br/>
+						<br/>
+						Jonathan De Leon and Matthew Ma<br/>
+						CPTR 210 Data Networks
+
+					</script>
+				</section>
+				<section id="vertical-slides-2">
+					<section>
+						<h2>What is a VPN?</h2>
+						<p>
+							A service that lets you access the web safely and privately by routing your
+							connection through a server and hiding your online actions
+						</p>
+					</section>
+					<section>
+						<h2>How does it work?</h2>
+						<div class="fragment-replace">
+							<img class="fragment current-visible" src="https://thebestvpn.com/wp-content/uploads/2017/11/no-vpn-1024x801.jpeg">
+							<img class="fragment current-visible" src="https://thebestvpn.com/wp-content/uploads/2017/11/with-vpn-1024x791.jpeg">
+						</div>
+					</section>
+				</section>
+				<section id="vertical-slides-3">
+					<section>
+						<h2>VPN Protocols</h2>
+						<ul>
+							<li>Point-To-Point Tunneling Protocol (PPTP)</li>
+							<li>Layer 2 Tunneling Protocol (L2TP/IPsec)</li>
+							<li>Internet Key Exchange, Version 2 (IKEv2)</li>
+							<li>OpenVPN</li>
+						</ul>
+						<aside class="notes">
+							This is one of the oldest protocols in use, originally designed by Microsoft. Pros: works on old computers, is a part of the Windows operating system, and it’s easy to set up. Cons: by today’s standards, it’s barely secure. Avoid a provider if this is the only protocol offered.
+							L2TP/IPsec (Layer 2 Tunneling Protocol). This is a combination of PPTP and Cisco’s L2F protocol. The concept of this protocol is sound — it uses keys to establish a secure connection on each end of your data tunnel — but the execution isn’t very safe. The addition of the IPsec protocol improves security a bit, but there are reports of NSA’s alleged ability to break this protocol and see what’s being transmitted. No matter if those are actually true, the fact that there’s a debate at all is perhaps enough to avoid this as well.
+							IKEv2 (Internet Key Exchange, Version 2). This is yet another Microsoft-built protocol. It’s an iteration of Microsoft’s previous protocols and a much more secure one at that. It provides you with some of the best security.
+							OpenVPN. This takes what’s best in the above protocols and does away with most of the flaws. It’s based on SSL/TLS and it’s an open source project, which means that it’s constantly being improved by hundreds of developers. It secures the connection by using keys that are known only by the two participating parties on either end of the transmission. Overall, it’s the most versatile and secure protocol out there.
+
+							Unfortunately, not all devices will allow you to use all these protocols. Since most of them were built by Microsoft, you’ll be able to use them on all Windows PCs. For Apple devices, you will come across some limitations. For example, L2TP/IPsec is the default protocol for iPhone.
+						</aside>
+					</section>
+				</section>
+				<section data-markdown id="slide-4">
 					<script type="text/template">
 						## China VPN
 
@@ -35,7 +95,7 @@
 						Successful VPNs use obfuscation to make itself look like non-VPN traffic
 					</script>
 				</section>
-				<section data-markdown>
+				<section data-markdown id="slide-5">
 					<script type="text/template">
 						## China VPN History
 
@@ -48,7 +108,7 @@
 						# [TODO: Extensive History](https://cs.stanford.edu/people/eroberts/cs181/projects/2010-11/FreedomOfInformationChina/the-great-firewall-of-china-background/index.html)
 					</script>
 				</section>
-				<section data-markdown>
+				<section data-markdown id="slide-6">
 					<script type="text/template">
 						## [Websites blocked by the Great Firewall](https://en.wikipedia.org/wiki/Websites_blocked_in_mainland_China)
 
@@ -61,20 +121,10 @@
 						- etc.
 					</script>
 				</section>
-				<section data-markdown>
+				<section data-markdown id="slide-7">
 					<script type="text/template">
 						# [TODO: Greatfire.org](https://www.bloomberg.com/news/articles/2014-03-20/secretive-web-activists-give-chinese-a-way-around-censorship)
 					</script>
-				</section>
-				<section>my slide</section>
-				<section>
-					<section data-markdown>
-						## Virtual Private Network
-
-						Jonathan De Leon and Matthew Ma
-
-						CPTR 210 Data Networks
-					</section>
 				</section>
 			</div>
 		</div>
