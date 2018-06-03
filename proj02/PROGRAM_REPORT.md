@@ -35,4 +35,17 @@ g++ -std=c++11 main.cpp PQType.cpp Heap.cpp Application.cpp Applicant.cpp && ./a
 ```
 
 ## Write Up (Phase 5)
-Coming soon...
+
+Implementing the data structure gave me more knowledge on how the data structure works. It is one thing to read about the implementation
+and another to actually implement it yourself. I always prefer the latter as it gives me a deeper understanding on 
+how it can be implemented and used in different scenarios.
+
+I chose to use a priority queue since the beginning. Fortunately, I had previously learned about this data structure in many of my other
+classes before learning about it in this class. I knew its power and also its limitations. One of the limitations is the instability of Heaps.
+Heaps use the Heapsort algorithm to re-organize the tree. It puts the maximum element at the top of the Heap and has no regard about the insertion
+order of the element. To mitigate this, I gave every new applicant an ID that is used to make sure the priority queue looks at priority and then looks at
+insertion order. This would also work in a multi-threaded environment if there are multiple applicants being created at the same time.
+
+In regards to testing, this was something new that I have not done in the past. To be honest, I didn't like it at first because I wanted to get straight to 
+the implementation. However, I do see the benefits of writing tests first. It will take some time to get used to as I start to write test-driven applications. 
+Nonetheless, it was a fun experience.
