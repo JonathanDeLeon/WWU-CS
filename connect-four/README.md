@@ -17,5 +17,5 @@ python3 main.py
 
 
 ## Authors
-- @JonathanDeLeon
-- @ethanbeaver
+- [Jonathan De Leon](https://www.github.com/JonathanDeLeon)
+- [Ethan Beaver](https://www.github.com/ethanbeaver)
