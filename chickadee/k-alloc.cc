@@ -26,6 +26,99 @@ x86_64_page *kallocpage() {
     return reinterpret_cast<x86_64_page *>(kalloc(PAGESIZE));
 }
 
+page_t buddy(page_t page) {
+    page_t ptr = page * PAGESIZE;
+    order_t order = pages[page].order;
+    page_t size = 1 << order;
+    page_t buddy = ptr ^ size;
+    return buddy;
+}
+
+void removeFromFreeList(page_t page) {
+    order_t order = pages[page].order;
+    page_t current = freeLists[order];
+    page_t prev = -1;
+    while (current != -1) {
+        if (current == page) {
+            if (prev == -1) {
+                // if page we were looking for was at the top of the stack
+                freeLists[order] = pages[current].next;
+            } else {
+                pages[prev].next = pages[current].next;
+                pages[current].next = -1;
+            }
+            return;
+        }
+        prev = current;
+        current = pages[current].next;
+    }
+}
+
+void coalesce(order_t order) {
+    if (order >= max_order) {
+        return;
+    }
+    bool coalesced = false;
+    page_t page = freeLists[order];
+    // iterate over freeList[order] giving each page in free list
+    while (page != -1) {
+        page_t buddyPage = buddy(page);
+        if (pages[buddyPage].isFree && pages[buddyPage].order == order) {
+            // Remove page and buddy from the stack
+            removeFromFreeList(page);
+            removeFromFreeList(buddyPage);
+
+            // Increment order
+            pages[page].order++;
+            pages[buddyPage].order++;
+
+            // Select new lead page for block
+            if (page < buddyPage) {
+                // Add page to stack in order + 1
+                pages[page].next = freeLists[order + 1];
+                freeLists[order + 1] = page;
+
+                pages[buddyPage].isFree = false;
+            } else {
+                // Add buddy to stack in order + 1
+                pages[buddyPage].next = freeLists[order + 1];
+                freeLists[order + 1] = buddyPage;
+            }
+
+            coalesced = true;
+        }
+        page = pages[page].next;
+    }
+    if (coalesced) {
+        coalesce(order + 1);
+    }
+}
+
+void split(order_t order) {
+    if (order > max_order) {
+        return;
+    }
+    if (freeLists[order] == -1) {
+        split(order + 1);
+    }
+    if (freeLists[order] == -1) {
+        return;
+    }
+    // remove page from freeList[order]
+    page_t page = freeLists[order];
+    freeLists[order] = pages[page].next;
+
+    // add page and buddy to freeList[order - 1]
+    pages[page].order--;
+    page_t buddyPage = buddy(page);
+    pages[buddyPage].order--;
+
+    pages[page].next = freeLists[pages[page].order];
+    freeLists[order] = page;
+
+    pages[buddyPage].next = freeLists[pages[buddyPage].order];
+    freeLists[order] = page;
+}
 
 // init_kalloc
 //    Initialize stuff needed by `kalloc`. Called from `init_hardware`,
@@ -46,11 +139,12 @@ void init_kalloc() {
         pages[page].order = min_order;
         pages[page].next = -1;
         if (pages[page].isFree) {
-            // Insert page to the head of the linked list
+            // Insert free page to the head of the linked list
             pages[page].next = freeLists[min_order];
             freeLists[min_order] = page;
         }
     }
+    coalesce(min_order);
     page_lock.unlock(irqs);
 
     test_kalloc();
@@ -60,33 +154,29 @@ void init_kalloc() {
 //    Allocate and return a pointer to at least `sz` contiguous bytes
 //    of memory. Returns `nullptr` if `sz == 0` or on failure.
 void *kalloc(size_t sz) {
-    // Static size
-    assert(sz == PAGESIZE);
 
     auto irqs = page_lock.lock();
+    order_t order = msb(sz - 1); // order for size
 
-    /*
-    // Find a free page in page table
-    page_t foundPage = -1;
-    for (page_t page = 0; page < pages_in_system; page++) {
-        if (pages[page].isFree) {
-            foundPage = page;
-            break;
-        }
+
+    page_t foundPage = freeLists[order];
+    // If no free page, see if we can split a higher order
+    if (foundPage == -1) {
+        split(order + 1);
     }
-     */
-    // More efficient then above
-    page_t foundPage = freeLists[min_order];
+    // If no free pages after split, we cannot allocate a page
+    if (freeLists[order] == -1) {
+        page_lock.unlock(irqs);
+        return nullptr;
+    }
+
     // Allocate free page to pointer
-    void *p = nullptr;
-    if (foundPage != -1) {
-        // Assign a kernel (high canonical) address
-        p = (void *) pa2ka<x86_64_page *>(foundPage * PAGESIZE);
-        // Pop free page from the stack
-        freeLists[min_order] = pages[foundPage].next;
-        pages[foundPage].next = -1;
-        pages[foundPage].isFree = false;
-    }
+    // Assign a kernel (high canonical) address
+    void *p = (void *) pa2ka<x86_64_page *>(foundPage * PAGESIZE);
+    // Pop free page from the stack
+    freeLists[min_order] = pages[foundPage].next;
+    pages[foundPage].next = -1;
+    pages[foundPage].isFree = false;
 
     page_lock.unlock(irqs);
     return (void *) p;
@@ -96,12 +186,18 @@ void *kalloc(size_t sz) {
 //    Free a pointer previously returned by `kalloc`, `kallocpage`, or
 //    `kalloc_pagetable`. Does nothing if `ptr == nullptr`.
 void kfree(void *ptr) {
+    auto irqs = page_lock.lock();
+
     // Convert kernel address to physical address and then divide by PAGESIZE to get page #
     page_t page = ka2pa((x86_64_page *) ptr) / PAGESIZE;
     pages[page].isFree = true;
-    // Add free page to the head of the freeList
-    pages[page].next = freeLists[min_order];
-    freeLists[min_order] = page;
+    // Add free page to the head of the freeList based on order
+    order_t order = pages[page].order;
+    pages[page].next = freeLists[order];
+    freeLists[order] = page;
+    coalesce(order);
+
+    page_lock.unlock(irqs);
 }
 
 // test_kalloc
@@ -117,5 +213,17 @@ void test_kalloc() {
     kfree(p2);
     // Both pages should be the same
     assert(p1 == p2);
+
+    // Allocate two different pages
+    p1 = kalloc(PAGESIZE);
+    p2 = kalloc(PAGESIZE);
+    assert(p1 != p2);
+    kfree(p1);
+    kfree(p2);
+
+    // Allocate page with higher order
+//    p1 = kalloc(PAGESIZE + 4);
+//    assert(p1);
+//    kfree(p1);
 }
 #pragma GCC pop_options
