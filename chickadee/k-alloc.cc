@@ -30,7 +30,7 @@ page_t buddy(page_t page) {
     page_t ptr = page * PAGESIZE;
     order_t order = pages[page].order;
     page_t size = 1 << order;
-    page_t buddy = ptr ^ size;
+    page_t buddy = ptr ^size;
     return buddy;
 }
 
@@ -45,8 +45,9 @@ void removeFromFreeList(page_t page) {
                 freeLists[order] = pages[current].next;
             } else {
                 pages[prev].next = pages[current].next;
-                pages[current].next = -1;
             }
+            pages[current].isFree = false;
+            pages[current].next = -1;
             return;
         }
         prev = current;
@@ -72,7 +73,7 @@ void coalesce(order_t order) {
             pages[page].order++;
             pages[buddyPage].order++;
 
-            // Select new lead page for block
+            // Select new lead page for block (lesser value)
             if (page < buddyPage) {
                 // Add page to stack in order + 1
                 pages[page].next = freeLists[order + 1];
@@ -107,17 +108,18 @@ void split(order_t order) {
     // remove page from freeList[order]
     page_t page = freeLists[order];
     freeLists[order] = pages[page].next;
+    pages[page].order = order - 1;
 
     // add page and buddy to freeList[order - 1]
-    pages[page].order--;
     page_t buddyPage = buddy(page);
-    pages[buddyPage].order--;
 
-    pages[page].next = freeLists[pages[page].order];
-    freeLists[order] = page;
+    pages[page].next = freeLists[order - 1];
+    pages[page].isFree = true;
+    freeLists[order - 1] = page;
 
-    pages[buddyPage].next = freeLists[pages[buddyPage].order];
-    freeLists[order] = page;
+    pages[buddyPage].next = freeLists[order - 1];
+    pages[buddyPage].isFree = true;
+    freeLists[order - 1] = buddyPage;
 }
 
 // init_kalloc
@@ -128,7 +130,7 @@ void init_kalloc() {
     auto irqs = page_lock.lock();
 
     // Initialize the free list for each order 12-21
-    for (order_t order = 0; order < max_order +1; order++) {
+    for (order_t order = 0; order < max_order + 1; order++) {
         freeLists[order] = -1;
     }
 
@@ -170,16 +172,17 @@ void *kalloc(size_t sz) {
         return nullptr;
     }
 
-    // Allocate free page to pointer
-    // Assign a kernel (high canonical) address
-    void *p = (void *) pa2ka<x86_64_page *>(foundPage * PAGESIZE);
     // Pop free page from the stack
-    freeLists[min_order] = pages[foundPage].next;
+    freeLists[order] = pages[foundPage].next;
     pages[foundPage].next = -1;
     pages[foundPage].isFree = false;
 
+    // Allocate free page to pointer
+    // Assign a kernel (high canonical) address
+    x86_64_page *p = pa2ka<x86_64_page *>(foundPage * PAGESIZE);
+
     page_lock.unlock(irqs);
-    return (void *) p;
+    return p;
 }
 
 // kfree(ptr)
@@ -190,6 +193,9 @@ void kfree(void *ptr) {
 
     // Convert kernel address to physical address and then divide by PAGESIZE to get page #
     page_t page = ka2pa((x86_64_page *) ptr) / PAGESIZE;
+
+    assert(!pages[page].isFree);
+
     pages[page].isFree = true;
     // Add free page to the head of the freeList based on order
     order_t order = pages[page].order;
@@ -226,4 +232,5 @@ void test_kalloc() {
 //    assert(p1);
 //    kfree(p1);
 }
+
 #pragma GCC pop_options
