@@ -158,7 +158,7 @@ void init_kalloc() {
 void *kalloc(size_t sz) {
 
     auto irqs = page_lock.lock();
-    order_t order = msb(sz - 1); // order for size
+    order_t order = msb(sz) - 1; // order for size
 
 
     page_t foundPage = freeLists[order];
@@ -228,9 +228,9 @@ void test_kalloc() {
     kfree(p2);
 
     // Allocate page with higher order
-//    p1 = kalloc(PAGESIZE + 4);
-//    assert(p1);
-//    kfree(p1);
+    p1 = kalloc(PAGESIZE + 4);
+    assert(p1);
+    kfree(p1);
 }
 
 #pragma GCC pop_options
