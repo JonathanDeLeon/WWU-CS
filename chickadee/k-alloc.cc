@@ -27,10 +27,11 @@ x86_64_page *kallocpage() {
 }
 
 page_t buddy(page_t page) {
-    page_t ptr = page * PAGESIZE;
+    uintptr_t ptr = page * PAGESIZE;
     order_t order = pages[page].order;
-    page_t size = 1 << order;
-    page_t buddy = ptr ^size;
+    uintptr_t size = 1 << order;
+    uintptr_t buddyPtr = ptr ^ size;
+    page_t buddy = buddyPtr / PAGESIZE;
     return buddy;
 }
 
@@ -76,19 +77,23 @@ void coalesce(order_t order) {
             // Select new lead page for block (lesser value)
             if (page < buddyPage) {
                 // Add page to stack in order + 1
+                pages[page].isFree = true;
                 pages[page].next = freeLists[order + 1];
                 freeLists[order + 1] = page;
-
-                pages[buddyPage].isFree = false;
             } else {
                 // Add buddy to stack in order + 1
+                pages[buddyPage].isFree = true;
                 pages[buddyPage].next = freeLists[order + 1];
                 freeLists[order + 1] = buddyPage;
             }
 
             coalesced = true;
+            // After pages are free, get the page at the top of the stack
+            page = freeLists[order];
+        } else {
+            // If buddy not free, get the next page in the stack
+            page = pages[page].next;
         }
-        page = pages[page].next;
     }
     if (coalesced) {
         coalesce(order + 1);
@@ -117,6 +122,7 @@ void split(order_t order) {
     pages[page].isFree = true;
     freeLists[order - 1] = page;
 
+    pages[buddyPage].order = order - 1;
     pages[buddyPage].next = freeLists[order - 1];
     pages[buddyPage].isFree = true;
     freeLists[order - 1] = buddyPage;
@@ -165,12 +171,14 @@ void *kalloc(size_t sz) {
     // If no free page, see if we can split a higher order
     if (foundPage == -1) {
         split(order + 1);
+        foundPage = freeLists[order];
     }
     // If no free pages after split, we cannot allocate a page
     if (freeLists[order] == -1) {
         page_lock.unlock(irqs);
         return nullptr;
     }
+
 
     // Pop free page from the stack
     freeLists[order] = pages[foundPage].next;
