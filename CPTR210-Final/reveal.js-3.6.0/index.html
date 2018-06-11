@@ -53,17 +53,40 @@
 					<section>
 						<h2>What is a VPN?</h2>
 						<p>
-							A service that lets you access the web safely and privately by routing your
+							A service that lets you access the web safely and privately by routing(tunneling) your
 							connection through a server and hiding your online actions
 						</p>
+						<img height="300px" src="http://cdn4.wpbeginner.com/wp-content/uploads/2017/03/howvpnworks.png">
 					</section>
 					<section>
 						<h2>How does it work?</h2>
 						<div class="fragment-replace">
-							<img class="fragment current-visible" src="https://thebestvpn.com/wp-content/uploads/2017/11/no-vpn-1024x801.jpeg">
-							<img class="fragment current-visible" src="https://thebestvpn.com/wp-content/uploads/2017/11/with-vpn-1024x791.jpeg">
+							<img height="500px" class="fragment current-visible" src="https://thebestvpn.com/wp-content/uploads/2017/11/no-vpn-1024x801.jpeg">
+							<img height="500px" class="fragment current-visible" src="https://thebestvpn.com/wp-content/uploads/2017/11/with-vpn-1024x791.jpeg">
 						</div>
+						<aside class="notes">
+						Two connections: one is made to the Internet, the other to the VPN<br>
+                        The destination site sees the VPN server as the traffic origin, not you. <br>
+                        No one can (easily) identify you or your computer as the source of the data, nor what you’re doing (what websites you’re visiting, what data you’re transferring, etc.).
+                        Your data is encrypted, so even if someone does look at what you’re sending, they only see encrypted information and not raw data.<br>
+
+						</aside>
 					</section>
+				</section>
+                <section>
+                    <h2>Critical Functions</h2>
+                    <ul>
+						<li>Authentication</li>
+						<li>Access Control</li>
+						<li>Confidentiality</li>
+						<li>Data Integrity</li>
+					</ul>
+					<aside class="notes">
+						Authentication – validates that the data was sent from the sender.<br>
+						Access control – limiting unauthorized users from accessing the network.<br>
+						Confidentiality – preventing the data to be read or copied as the data is being transported.<br>
+						Data Integrity – ensuring that the data has not been altered
+					</aside>
 				</section>
 				<section id="vertical-slides-3">
 					<section>
@@ -71,16 +94,12 @@
 						<ul>
 							<li>Point-To-Point Tunneling Protocol (PPTP)</li>
 							<li>Layer 2 Tunneling Protocol (L2TP/IPsec)</li>
-							<li>Internet Key Exchange, Version 2 (IKEv2)</li>
 							<li>OpenVPN</li>
 						</ul>
 						<aside class="notes">
-							This is one of the oldest protocols in use, originally designed by Microsoft. Pros: works on old computers, is a part of the Windows operating system, and it’s easy to set up. Cons: by today’s standards, it’s barely secure. Avoid a provider if this is the only protocol offered.
-							L2TP/IPsec (Layer 2 Tunneling Protocol). This is a combination of PPTP and Cisco’s L2F protocol. The concept of this protocol is sound — it uses keys to establish a secure connection on each end of your data tunnel — but the execution isn’t very safe. The addition of the IPsec protocol improves security a bit, but there are reports of NSA’s alleged ability to break this protocol and see what’s being transmitted. No matter if those are actually true, the fact that there’s a debate at all is perhaps enough to avoid this as well.
-							IKEv2 (Internet Key Exchange, Version 2). This is yet another Microsoft-built protocol. It’s an iteration of Microsoft’s previous protocols and a much more secure one at that. It provides you with some of the best security.
-							OpenVPN. This takes what’s best in the above protocols and does away with most of the flaws. It’s based on SSL/TLS and it’s an open source project, which means that it’s constantly being improved by hundreds of developers. It secures the connection by using keys that are known only by the two participating parties on either end of the transmission. Overall, it’s the most versatile and secure protocol out there.
-
-							Unfortunately, not all devices will allow you to use all these protocols. Since most of them were built by Microsoft, you’ll be able to use them on all Windows PCs. For Apple devices, you will come across some limitations. For example, L2TP/IPsec is the default protocol for iPhone.
+							PPTP - Designed by Microsoft. Works on old computers. Barely secure<br>
+							L2TP/IPsec (Layer 2 Tunneling Protocol). This is a combination of PPTP and Cisco’s L2F protocol. Uses keys to establish a secure connection on each end of your data tunnel Used by the University<br>
+							OpenVPN. It’s based on SSL/TLS and it’s an open source project. It secures the connection by using keys that are known only by the two participating parties on either end of the transmission.
 						</aside>
 					</section>
 				</section>
@@ -130,6 +149,106 @@
 
 						Uses Amazon Web Services, which encrypts all its Web pages so that Chinese censors can't pick which pages to block
 					</script>
+				</section>
+                <section>
+                    <section>
+						<h2>Our Implementation</h2>
+					</section>
+                    <section>
+                        <h2>OpenVPN</h2>
+                        <ul>
+                            <li>Open-source VPN protocol</li>
+                            <li>Uses SSL/TLS (OpenSSL) for key exchange</li>
+                            <li>Has no known major vulnerabilities</li>
+                            <li>Configurable to run on any port and either UDP or TCP</li>
+                        </ul>
+                    </section>
+                    <section>
+						<h2>Client-Server</h2>
+						<img src="https://cdn3.techadvisor.co.uk/cmsdata/features/3674019/what-is-vpn-how-it-works-need-of-vpn_thumb800.jpg">
+					</section>
+					<section>
+						<h2>Server configuration</h2>
+						<pre>
+							<code>port 1194
+proto udp
+dev tun
+ca /etc/openvpn/easy-rsa/pki/ca.crt
+cert /etc/openvpn/easy-rsa/pki/issued/server.crt
+key /etc/openvpn/easy-rsa/pki/private/server.key
+dh /etc/openvpn/easy-rsa/pki/dh.pem
+cipher AES-256-CBC
+auth SHA512
+server 10.8.0.0 255.255.255.0
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
+ifconfig-pool-persist ipp.txt
+keepalive 10 120
+comp-lzo
+persist-key
+persist-tun
+status openvpn-status.log
+log-append openvpn.log
+verb 3
+tls-server
+tls-auth /etc/openvpn/pfs.key</code></pre>
+					</section>
+					<section>
+						<h2>Server Routing Tables</h2>
+						<pre>
+							<code>sudo iptables -t nat -A POSTROUTING -s 10.4.0.1/2 -o eth0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE</code>
+						</pre>
+						<aside class="notes">
+                            Consult the NAT table and append a rule for packets going out<br>
+							The rule is to create a virtual connection and share the connection without disrupting original traffic
+						</aside>
+					</section>
+					<section>
+						<h2>Client configuration</h2>
+						<pre>
+							<code>client
+dev tun
+proto udp
+remote 52.88.220.200 1194
+ca ca.crt
+cert client.crt
+key client.key
+tls-version-min 1.2
+tls-cipher TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256:TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256:TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-256-CBC-SHA256
+cipher AES-256-CBC
+auth SHA512
+resolv-retry infinite
+auth-retry none
+nobind
+persist-key
+persist-tun
+ns-cert-type server
+comp-lzo
+verb 3
+tls-client
+tls-auth pfs.key</code></pre>
+					</section>
+				</section>
+				<section>
+					<h2>Demo</h2>
+				</section>
+				<section>
+					<section>
+						<h2>Conclusion</h2>
+					</section>
+                    <section>
+						<h2>When to use a VPN?</h2>
+						<ul>
+							<li>Encrypt your activity on the web</li>
+							<li>Hide your location</li>
+							<li>Protected connection on a public WiFi hotspot</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<h2>Q&A</h2>
 				</section>
 			</div>
 		</div>
