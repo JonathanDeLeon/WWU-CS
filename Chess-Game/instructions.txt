@@ -1,0 +1,5 @@
+White always moves first, and players alternate turns. Players can only move one piece at a time.
+Players take pieces when they encounter an opponent in their movement path.
+Players cannot take or move through their own pieces.
+For more rules, follow the link:
+https://www.chessusa.com/chess-rules.html
