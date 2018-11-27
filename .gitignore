@@ -2,3 +2,5 @@
 cmake-build-debug/*
 *.o
 src/SortMerge
+*.gch
+*.out
