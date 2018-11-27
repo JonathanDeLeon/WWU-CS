@@ -1,0 +1,21 @@
+Files included:
+
+Makefile
+README
+smjoin_main.C
+SMJTester.h
+SMJTester.C
+test_driver.h
+test_driver.C
+sortMerge.h
+sort.h
+sort_driver.C
+system_defs.C
+db.C
+hfpage.C
+page.C
+heapfile.C
+scan.C
+
+You need to implement your sortMerge.C.
+
