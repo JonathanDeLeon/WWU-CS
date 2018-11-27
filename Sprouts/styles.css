@@ -1,0 +1,13 @@
+html, body {
+    background: grey;
+    color: white;
+    width: 100%;
+    height: 100%;
+}
+#game {
+    background-color: white;
+    background-image: url("http://rabello.info/files/Sprouts_icon(.5%20Opacity).png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 200px;
+}
