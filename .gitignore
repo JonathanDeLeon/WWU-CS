@@ -47,3 +47,5 @@ Thumbs.db
 # ./chickadee/*
 .idea/
 cmake-build-debug/
+*.iml
+target/
