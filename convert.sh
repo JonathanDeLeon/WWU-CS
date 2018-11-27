@@ -1,7 +1,7 @@
 PATHTOREPO=$1
-IFS='/'; tokens=( $1 )
-echo ${tokens[2]}
-REPO=${tokens[2]}
+echo ${PATHTOREPO}
+REPO=$(echo $PATHTOREPO | cut -d/ -f3)
+echo ${REPO}
 
 git remote add other ${PATHTOREPO}
 git fetch other
