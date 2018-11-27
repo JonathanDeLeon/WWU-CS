@@ -8,7 +8,7 @@ git fetch other
 git checkout -b ${REPO} other/master
 mkdir ${REPO}
 git mv ./* ${REPO} -k                      # repeat as necessary for each file/dir
-#git commit -m "Added ${REPO}"
+git commit -m "Added ${REPO}"
 #git checkout master
 #git merge ${REPO} --allow-unrelated-histories --commit   # should add ZZZ/ to master
 #git commit
